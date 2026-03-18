@@ -1,73 +1,119 @@
-# React + TypeScript + Vite
+# Voice Identify — Frontend Application
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Hệ thống nhận diện và xác thực giọng nói — Frontend Base sử dụng Vite, React và TypeScript.
 
-Currently, two official plugins are available:
+## Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+### Core
 
-## React Compiler
+- **Framework**: Vite + React 19 + TypeScript
+- **State Management**: TanStack React Query v5 (Server State) & Zustand (UI State)
+- **HTTP Client**: Axios with Interceptors
+- **Form & Validation**: React Hook Form + Zod
+- **Styling**: Tailwind CSS v4 + shadcn/ui (Radix UI)
+- **Routing**: React Router v7
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Tools
 
-## Expanding the ESLint configuration
+- **Component Library**: shadcn/ui
+- **Icons**: Lucide React
+- **Notifications**: Sonner (Toast)
+- **File Upload**: React Dropzone
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Project Structure
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```text
+voice-identify-fe/
+├── src/
+│   ├── api/            # Axios instance & global interceptors
+│   ├── components/
+│   │   └── ui/         # shadcn/ui reusable components
+│   ├── configs/        # App configurations (env, constants)
+│   ├── feature/        # Feature-based modules (Voice Recognition)
+│   │   └── voice/
+│   │       ├── api/    # Feature-specific API calls
+│   │       ├── hooks/  # Modular hooks (useVoice)
+│   │       ├── schemas/# Zod validation schemas
+│   │       └── store/  # Feature-specific Zustand stores
+│   ├── hooks/          # Global reusable hooks
+│   ├── layouts/        # Layout wrappers (MainLayout)
+│   ├── libs/           # Third-party library initializations (QueryClient)
+│   ├── pages/          # Page components
+│   ├── types/          # Global TypeScript interfaces
+│   └── utils/          # Global helper functions
+├── .env                # Environment variables
+├── components.json     # shadcn/ui configuration
+├── postcss.config.mjs  # PostCSS configuration for Tailwind v4
+└── vite.config.ts      # Vite configuration with @ alias
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Getting Started
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Prerequisites
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- Node.js ≥ 18
+- npm or pnpm
+
+### Setup
+
+1. **Clone the repository**
+
+   ```bash
+   git clone https://github.com/trh-thanh30/voice-identify-fe.git
+   cd voice-identify-fe
+   ```
+
+2. **Environment Setup**
+
+   Tạo file `.env` từ mẫu:
+
+   ```bash
+   VITE_API_BASE_URL=http://14.224.188.206:1112
+   ```
+
+3. **Install Dependencies**
+
+   ```bash
+   npm install
+   ```
+
+4. **Start Development Server**
+
+   ```bash
+   npm run dev
+   ```
+
+5. **Access**
+   - Local: http://localhost:5173
+
+## Command Reference
+
+| Command           | Description                              |
+| :---------------- | :--------------------------------------- |
+| `npm run dev`     | Chạy ứng dụng ở chế độ development       |
+| `npm run build`   | Build ứng dụng cho môi trường production |
+| `npm run lint`    | Kiểm tra lỗi code với ESLint             |
+| `npm run preview` | Chạy thử bản build production            |
+
+## Git Conventions
+
+Project sử dụng **Conventional Commits**.
+
+```text
+<type>: <subject>
 ```
+
+| Type       | Mô tả                |
+| :--------- | :------------------- |
+| `feat`     | Tính năng mới        |
+| `fix`      | Sửa bug              |
+| `docs`     | Thay đổi tài liệu    |
+| `refactor` | Refactor code        |
+| `test`     | Thêm / cập nhật test |
+| `chore`    | Công việc bảo trì    |
+
+## Documentation
+
+Tài liệu chi tiết về kiến trúc API và Modular Hook Pattern:
+
+- [Voice Recognition Design Pattern](./src/feature/voice-recognition-pattern.md) — Hướng dẫn chi tiết cách dùng API & Hook.
