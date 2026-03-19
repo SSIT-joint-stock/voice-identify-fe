@@ -1,17 +1,21 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { MainLayout } from '@/layouts/MainLayout';
-import { Home } from '@/pages/Home';
+import { Navigate, Route, Routes } from "react-router-dom";
+import { MainLayout } from "@/layouts/MainLayout";
+import Home from "@/pages/Home";
+import Voice from "@/pages/Voice";
+import { ROUTES } from "@/constants";
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<MainLayout />}>
-          <Route index element={<Home />} />
-          {/* Add more routes here */}
-        </Route>
-      </Routes>
-    </BrowserRouter>
+    <Routes>
+      <Route element={<MainLayout />}>
+        <Route path={ROUTES.HOME} element={<Home />} />
+        <Route path={ROUTES.VOICE} element={<Voice />} />
+        <Route
+          path={ROUTES.NOT_FOUND}
+          element={<Navigate to={ROUTES.VOICE} replace />}
+        />
+      </Route>
+    </Routes>
   );
 }
 
