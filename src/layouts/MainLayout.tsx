@@ -7,9 +7,8 @@ export function MainLayout() {
     <SidebarProvider>
       <AppSidebar />
       <main className="flex-1 overflow-auto">
-        <div className="flex items-center p-4 border-b">
+        <div className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
           <SidebarTrigger />
-          <h1 className="ml-4 text-lg font-semibold italic">Voice Identify</h1>
         </div>
         <div className="p-4">
           <Outlet />

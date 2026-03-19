@@ -93,7 +93,7 @@ export default function Voice() {
 
             <TabsTrigger value={VOICE_TABS.IDENTIFY} className="gap-2">
               <Search className="size-4" />
-              Nhận diện top 5
+              Tra cứu
             </TabsTrigger>
 
             <TabsTrigger value={VOICE_TABS.IDENTIFY_TWO} className="gap-2">

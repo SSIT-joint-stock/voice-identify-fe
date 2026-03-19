@@ -56,7 +56,7 @@ export function VoiceUploadForm() {
   return (
     <Card className="rounded-2xl">
       <CardHeader>
-        <CardTitle>Đăng ký giọng nói</CardTitle>
+        <CardTitle>Khai báo hồ sơ giọng nói</CardTitle>
         <CardDescription>
           Theo spec API: thông tin cá nhân đi bằng query params, còn file và
           criminal_record đi bằng form-data.
