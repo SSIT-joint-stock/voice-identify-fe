@@ -1,5 +1,5 @@
-import axiosInstance from "@/api/axios.instance";
-import { VOICE_API_ENDPOINTS } from "@/constants";
+import axiosInstance from '@/api/axios.instance';
+import { VOICE_API_ENDPOINTS } from '@/constants';
 import type {
   IdentifyTwoVoiceRequest,
   IdentifyTwoVoiceResponse,
@@ -9,23 +9,23 @@ import type {
   UploadVoiceResponse,
   VoiceIdentifyItem,
   VoiceIdentifyTwoItem,
-} from "../types/voice.types";
+} from '../types/voice.types';
 
 function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
 function asArray<T>(value: unknown): T[] {
   return Array.isArray(value) ? (value as T[]) : [];
 }
 
-function asString(value: unknown, fallback = ""): string {
-  return typeof value === "string" ? value : fallback;
+function asString(value: unknown, fallback = ''): string {
+  return typeof value === 'string' ? value : fallback;
 }
 
 function asNumber(value: unknown): number | undefined {
-  if (typeof value === "number" && Number.isFinite(value)) return value;
-  if (typeof value === "string") {
+  if (typeof value === 'number' && Number.isFinite(value)) return value;
+  if (typeof value === 'string') {
     const parsed = Number(value);
     if (Number.isFinite(parsed)) return parsed;
   }
@@ -40,15 +40,15 @@ function normalizeIdentifyItem(item: unknown): VoiceIdentifyItem | null {
   if (!isRecord(item)) return null;
 
   return {
-    message: asString(item.message, ""),
-    matched_voice_id: asString(item.matched_voice_id, ""),
+    message: asString(item.message, ''),
+    matched_voice_id: asString(item.matched_voice_id, ''),
     score: asNumber(item.score),
-    name: asString(item.name, ""),
-    citizen_identification: asString(item.citizen_identification, ""),
-    phone_number: asString(item.phone_number, ""),
-    hometown: asString(item.hometown, ""),
-    job: asString(item.job, ""),
-    passport: asString(item.passport, ""),
+    name: asString(item.name, ''),
+    citizen_identification: asString(item.citizen_identification, ''),
+    phone_number: asString(item.phone_number, ''),
+    hometown: asString(item.hometown, ''),
+    job: asString(item.job, ''),
+    passport: asString(item.passport, ''),
     criminal_record: normalizeCriminalRecord(item.criminal_record),
   };
 }
@@ -61,11 +61,9 @@ function normalizeIdentifyTwoItem(item: unknown): VoiceIdentifyTwoItem | null {
 
   return {
     ...base,
-    audio_path: asString(item.audio_path, ""),
+    audio_path: asString(item.audio_path, ''),
     num_speakers: asNumber(item.num_speakers),
-    audio_segment: asArray<{ start: number; end: number }>(
-      item.audio_segment
-    ).map((segment) => ({
+    audio_segment: asArray<{ start: number; end: number }>(item.audio_segment).map((segment) => ({
       start: asNumber((segment as Record<string, unknown>).start) ?? 0,
       end: asNumber((segment as Record<string, unknown>).end) ?? 0,
     })),
@@ -74,14 +72,14 @@ function normalizeIdentifyTwoItem(item: unknown): VoiceIdentifyTwoItem | null {
 
 function buildUploadVoiceFormData(payload: UploadVoiceRequest): FormData {
   const formData = new FormData();
-  formData.append("file", payload.file);
-  formData.append("criminal_record", payload.criminal_record);
+  formData.append('file', payload.file);
+  formData.append('criminal_record', payload.criminal_record);
   return formData;
 }
 
 function buildSingleAudioFormData(file: File): FormData {
   const formData = new FormData();
-  formData.append("file", file);
+  formData.append('file', file);
   return formData;
 }
 
@@ -89,38 +87,36 @@ export const voiceApi = {
   async uploadVoice(payload: UploadVoiceRequest): Promise<UploadVoiceResponse> {
     const formData = buildUploadVoiceFormData(payload);
 
-    const response = await axiosInstance.post(
-      VOICE_API_ENDPOINTS.UPLOAD,
-      formData,
-      {
-        params: {
-          name: payload.name,
-          citizen_identification: payload.citizen_identification,
-          phone_number: payload.phone_number,
-          hometown: payload.hometown,
-          job: payload.job,
-          passport: payload.passport,
-        },
-      }
-    );
+    const response = await axiosInstance.post(VOICE_API_ENDPOINTS.UPLOAD, formData, {
+      params: {
+        name: payload.name,
+        citizen_identification: payload.citizen_identification,
+        phone_number: payload.phone_number,
+        hometown: payload.hometown,
+        job: payload.job,
+        passport: payload.passport,
+      },
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
 
     return {
       message: asString(
         (response.data as Record<string, unknown>)?.message,
-        "Upload voice thành công."
+        'Upload voice thành công.'
       ),
       raw: response.data,
     };
   },
 
-  async identifyVoice(
-    payload: IdentifyVoiceRequest
-  ): Promise<IdentifyVoiceResponse> {
+  async identifyVoice(payload: IdentifyVoiceRequest): Promise<IdentifyVoiceResponse> {
     const formData = buildSingleAudioFormData(payload.file);
-    const response = await axiosInstance.post(
-      VOICE_API_ENDPOINTS.IDENTIFY,
-      formData
-    );
+    const response = await axiosInstance.post(VOICE_API_ENDPOINTS.IDENTIFY, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
 
     const items = asArray<unknown>(response.data)
       .map(normalizeIdentifyItem)
@@ -134,14 +130,13 @@ export const voiceApi = {
     };
   },
 
-  async identifyTwoVoice(
-    payload: IdentifyTwoVoiceRequest
-  ): Promise<IdentifyTwoVoiceResponse> {
+  async identifyTwoVoice(payload: IdentifyTwoVoiceRequest): Promise<IdentifyTwoVoiceResponse> {
     const formData = buildSingleAudioFormData(payload.file);
-    const response = await axiosInstance.post(
-      VOICE_API_ENDPOINTS.IDENTIFY_TWO,
-      formData
-    );
+    const response = await axiosInstance.post(VOICE_API_ENDPOINTS.IDENTIFY_TWO, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
 
     const items = asArray<unknown>(response.data)
       .map(normalizeIdentifyTwoItem)
