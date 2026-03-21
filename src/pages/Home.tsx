@@ -16,21 +16,21 @@ export default function Home() {
             Hệ thống nhận diện giọng nói theo luồng sử dụng thực tế
           </h1>
           <p className="text-muted-foreground">
-            Tách riêng trang tra cứu, trang đăng ký giọng nói và trang hướng dẫn
-            để thao tác rõ ràng hơn, không còn dồn toàn bộ chức năng vào một
-            workspace tab như bản demo ghép nữa.
+            Tách riêng trang tra cứu 1 người, tra cứu 1-2 người và trang đăng ký
+            để thao tác rõ ràng hơn, tránh dồn toàn bộ chức năng vào một màn
+            hình.
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
             <Button asChild size="lg" className="rounded-xl">
-              <Link to={ROUTES.VOICE_SEARCH}>
-                Mở trang tra cứu
+              <Link to={ROUTES.VOICE_SEARCH_SINGLE}>
+                Mở tra cứu 1 người
                 <ArrowRight className="ml-2 size-4" />
               </Link>
             </Button>
 
             <Button asChild size="lg" variant="outline" className="rounded-xl">
-              <Link to={ROUTES.VOICE_ENROLL}>Mở trang đăng ký</Link>
+              <Link to={ROUTES.VOICE_SEARCH_MULTI}>Mở tra cứu 1-2 người</Link>
             </Button>
           </div>
         </div>
@@ -40,10 +40,10 @@ export default function Home() {
         <Card className="rounded-2xl">
           <CardContent className="space-y-3 p-6">
             <Search className="size-6" />
-            <h2 className="text-lg font-semibold">Tra cứu giọng nói</h2>
+            <h2 className="text-lg font-semibold">Tra cứu 1 người</h2>
             <p className="text-sm text-muted-foreground">
-              Dùng để tải file audio và nhận diện kết quả theo luồng 1 người
-              hoặc 1-2 người nói.
+              Tải file audio có một người nói để nhận diện và hiển thị top 5 kết
+              quả phù hợp.
             </p>
           </CardContent>
         </Card>

@@ -11,8 +11,9 @@ export const QUERY_KEYS = {
 export const ROUTES = {
   HOME: "/",
   VOICE: "/voice",
-  VOICE_SEARCH: "/voice/search",
   VOICE_ENROLL: "/voice/enroll",
+  VOICE_SEARCH_SINGLE: "/voice/search-single",
+  VOICE_SEARCH_MULTI: "/voice/search-multi",
   VOICE_GUIDE: "/voice/guide",
   NOT_FOUND: "*",
 } as const;
