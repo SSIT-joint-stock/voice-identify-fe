@@ -1,5 +1,5 @@
 import { UsersRound } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { VoiceErrorDialog } from "@/feature/voice/components/voice-error-dialog";
 import { VoiceMultiSearchForm } from "@/feature/voice/components/voice-multi-search-form";
 import { VoiceAudioPlayer } from "@/feature/voice/components/voice-audio-player";
@@ -9,11 +9,24 @@ import { useVoiceStore } from "@/feature/voice";
 import type { VoiceIdentifyTwoItem } from "@/feature/voice/types/voice.types";
 
 export default function VoiceSearchMulti() {
-  const { identifyTwoResult, errorDialog, closeErrorDialog } = useVoiceStore();
+  const {
+    identifyTwoResult,
+    errorDialog,
+    closeErrorDialog,
+    resetIdentifyTwoResult,
+  } = useVoiceStore();
+
   const [audioFile, setAudioFile] = useState<File | null>(null);
   const [openEnrollDialog, setOpenEnrollDialog] = useState(false);
   const [selectedUnknownItem, setSelectedUnknownItem] =
     useState<VoiceIdentifyTwoItem | null>(null);
+
+  useEffect(() => {
+    resetIdentifyTwoResult();
+    return () => {
+      resetIdentifyTwoResult();
+    };
+  }, [resetIdentifyTwoResult]);
 
   const items = identifyTwoResult?.items ?? [];
 
@@ -37,7 +50,14 @@ export default function VoiceSearchMulti() {
           </div>
         </section>
 
-        <VoiceMultiSearchForm onFileSelected={setAudioFile} />
+        <VoiceMultiSearchForm
+          onFileSelected={(file) => {
+            setAudioFile(file);
+            setSelectedUnknownItem(null);
+            setOpenEnrollDialog(false);
+            resetIdentifyTwoResult();
+          }}
+        />
 
         <VoiceAudioPlayer file={audioFile} title="Audio tra cứu 1-2 người" />
 

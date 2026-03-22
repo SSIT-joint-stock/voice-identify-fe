@@ -28,9 +28,17 @@ import {
 import { useUploadVoice } from "../hooks/use-voice";
 import { VoiceAudioDropzone } from "./voice-audio-dropzone";
 
-export function VoiceUploadForm() {
-  const uploadMutation = useUploadVoice();
+interface VoiceUploadFormProps {
+  initialFile?: File | null;
+  onUploadSuccess?: () => void;
+  compact?: boolean;
+}
 
+export function VoiceUploadForm({
+  initialFile = null,
+  onUploadSuccess,
+  compact = false,
+}: VoiceUploadFormProps) {
   const form = useForm<
     UploadVoiceSchemaInput,
     unknown,
@@ -45,7 +53,23 @@ export function VoiceUploadForm() {
       job: "",
       passport: "",
       criminalRecord: "[]",
-      audioFile: null,
+      audioFile: initialFile,
+    },
+  });
+
+  const uploadMutation = useUploadVoice({
+    onSuccess: () => {
+      form.reset({
+        name: "",
+        citizenIdentification: "",
+        phoneNumber: "",
+        hometown: "",
+        job: "",
+        passport: "",
+        criminalRecord: "[]",
+        audioFile: initialFile,
+      });
+      onUploadSuccess?.();
     },
   });
 
@@ -55,7 +79,7 @@ export function VoiceUploadForm() {
 
   return (
     <Card className="rounded-2xl">
-      <CardHeader>
+      <CardHeader className={compact ? "pb-3" : undefined}>
         <CardTitle>Đăng ký giọng nói</CardTitle>
         <CardDescription>
           Theo spec API: thông tin cá nhân đi bằng query params, còn file và

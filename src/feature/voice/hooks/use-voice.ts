@@ -9,7 +9,19 @@ import type {
   UploadVoiceSchemaOutput,
 } from "../schemas/voice.schema";
 
-export function useUploadVoice() {
+interface UploadVoiceOptions {
+  onSuccess?: () => void;
+}
+
+interface IdentifyVoiceOptions {
+  onSuccess?: () => void;
+}
+
+interface IdentifyTwoVoiceOptions {
+  onSuccess?: () => void;
+}
+
+export function useUploadVoice(options?: UploadVoiceOptions) {
   const setUploadResult = useVoiceStore((state) => state.setUploadResult);
 
   return useMutation({
@@ -28,6 +40,7 @@ export function useUploadVoice() {
     onSuccess: (data) => {
       setUploadResult(data);
       toast.success(data.message || "Upload voice thành công.");
+      options?.onSuccess?.();
     },
     onError: (error) => {
       toast.error(formatError(error));
@@ -35,7 +48,7 @@ export function useUploadVoice() {
   });
 }
 
-export function useIdentifyVoice() {
+export function useIdentifyVoice(options?: IdentifyVoiceOptions) {
   const setIdentifyResult = useVoiceStore((state) => state.setIdentifyResult);
 
   return useMutation({
@@ -49,10 +62,12 @@ export function useIdentifyVoice() {
 
       if (data.items.length === 0) {
         toast.error("Không có kết quả phù hợp.");
+        options?.onSuccess?.();
         return;
       }
 
       toast.success(`Đã nhận diện ${data.items.length} kết quả.`);
+      options?.onSuccess?.();
     },
     onError: (error) => {
       toast.error(formatError(error));
@@ -60,7 +75,7 @@ export function useIdentifyVoice() {
   });
 }
 
-export function useIdentifyTwoVoice() {
+export function useIdentifyTwoVoice(options?: IdentifyTwoVoiceOptions) {
   const setIdentifyTwoResult = useVoiceStore(
     (state) => state.setIdentifyTwoResult
   );
@@ -88,15 +103,18 @@ export function useIdentifyTwoVoice() {
             overCapacityItem.num_speakers ?? "không xác định"
           }.`
         );
+        options?.onSuccess?.();
         return;
       }
 
       if (data.items.length === 0) {
         toast.error("Không có dữ liệu nhận diện.");
+        options?.onSuccess?.();
         return;
       }
 
       toast.success(`Đã nhận diện ${data.items.length} kết quả.`);
+      options?.onSuccess?.();
     },
     onError: (error) => {
       toast.error(formatError(error));

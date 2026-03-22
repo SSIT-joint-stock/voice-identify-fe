@@ -1,5 +1,5 @@
 import { Search } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { VoiceErrorDialog } from "@/feature/voice/components/voice-error-dialog";
 import { VoiceSingleSearchForm } from "@/feature/voice/components/voice-single-search-form";
 import { VoiceAudioPlayer } from "@/feature/voice/components/voice-audio-player";
@@ -8,9 +8,18 @@ import { VoiceEnrollDialog } from "@/feature/voice/components/voice-enroll-dialo
 import { useVoiceStore } from "@/feature/voice";
 
 export default function VoiceSearchSingle() {
-  const { identifyResult, errorDialog, closeErrorDialog } = useVoiceStore();
+  const { identifyResult, errorDialog, closeErrorDialog, resetIdentifyResult } =
+    useVoiceStore();
+
   const [audioFile, setAudioFile] = useState<File | null>(null);
   const [openEnrollDialog, setOpenEnrollDialog] = useState(false);
+
+  useEffect(() => {
+    resetIdentifyResult();
+    return () => {
+      resetIdentifyResult();
+    };
+  }, [resetIdentifyResult]);
 
   const items = identifyResult?.items ?? [];
   const hasKnownMatch = items.some(
@@ -38,7 +47,12 @@ export default function VoiceSearchSingle() {
           </div>
         </section>
 
-        <VoiceSingleSearchForm onFileSelected={setAudioFile} />
+        <VoiceSingleSearchForm
+          onFileSelected={(file) => {
+            setAudioFile(file);
+            resetIdentifyResult();
+          }}
+        />
 
         <VoiceAudioPlayer file={audioFile} title="Audio tra cứu" />
 
@@ -49,7 +63,7 @@ export default function VoiceSearchSingle() {
           emptyText="Chưa có kết quả nhận diện."
         />
 
-        {shouldShowUnknownCta ? (
+        {shouldShowUnknownCta && audioFile ? (
           <div className="rounded-2xl border border-dashed p-5">
             <div className="space-y-2">
               <p className="font-semibold">Không tìm thấy người phù hợp?</p>
@@ -61,7 +75,6 @@ export default function VoiceSearchSingle() {
                 type="button"
                 onClick={() => setOpenEnrollDialog(true)}
                 className="inline-flex h-10 items-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground"
-                disabled={!audioFile}
               >
                 Đăng ký giọng nói
               </button>

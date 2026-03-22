@@ -5,7 +5,9 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
 import { VoiceUploadForm } from "./voice-upload-form";
+import { VoiceAudioPlayer } from "./voice-audio-player";
 import type { VoiceIdentifyTwoItem } from "../types/voice.types";
 
 interface VoiceEnrollDialogProps {
@@ -13,6 +15,15 @@ interface VoiceEnrollDialogProps {
   onOpenChange: (open: boolean) => void;
   sourceFile: File | null;
   speakerItem?: VoiceIdentifyTwoItem | null;
+}
+
+function formatSeconds(value: number) {
+  const minutes = Math.floor(value / 60);
+  const seconds = Math.floor(value % 60);
+  return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(
+    2,
+    "0"
+  )}`;
 }
 
 export function VoiceEnrollDialog({
@@ -41,7 +52,30 @@ export function VoiceEnrollDialog({
             </div>
           ) : null}
 
-          <VoiceUploadForm />
+          {speakerItem?.audio_segment?.length ? (
+            <div className="space-y-2 rounded-lg border p-3">
+              <p className="text-sm font-medium">Timestamp speaker</p>
+              <div className="flex flex-wrap gap-2">
+                {speakerItem.audio_segment.map((segment, index) => (
+                  <Badge
+                    key={`${segment.start}-${segment.end}-${index}`}
+                    variant="secondary"
+                  >
+                    {formatSeconds(segment.start)} -{" "}
+                    {formatSeconds(segment.end)}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          ) : null}
+
+          <VoiceAudioPlayer file={sourceFile} title="Audio nguồn" />
+
+          <VoiceUploadForm
+            initialFile={sourceFile}
+            compact
+            onUploadSuccess={() => onOpenChange(false)}
+          />
         </div>
       </DialogContent>
     </Dialog>

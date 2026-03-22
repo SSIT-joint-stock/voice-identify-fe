@@ -20,6 +20,11 @@ interface VoiceState {
   setUploadResult: (payload: UploadVoiceResponse | null) => void;
   setIdentifyResult: (payload: IdentifyVoiceResponse | null) => void;
   setIdentifyTwoResult: (payload: IdentifyTwoVoiceResponse | null) => void;
+
+  resetUploadResult: () => void;
+  resetIdentifyResult: () => void;
+  resetIdentifyTwoResult: () => void;
+
   openErrorDialog: (title: string, description: string) => void;
   closeErrorDialog: () => void;
   resetAllResults: () => void;
@@ -43,6 +48,10 @@ export const useVoiceStore = create<VoiceState>((set) => ({
   setIdentifyResult: (payload) => set({ identifyResult: payload }),
   setIdentifyTwoResult: (payload) => set({ identifyTwoResult: payload }),
 
+  resetUploadResult: () => set({ uploadResult: null }),
+  resetIdentifyResult: () => set({ identifyResult: null }),
+  resetIdentifyTwoResult: () => set({ identifyTwoResult: null }),
+
   openErrorDialog: (title, description) =>
     set({
       errorDialog: {
@@ -62,5 +71,6 @@ export const useVoiceStore = create<VoiceState>((set) => ({
       uploadResult: null,
       identifyResult: null,
       identifyTwoResult: null,
+      errorDialog: initialErrorDialog,
     }),
 }));
