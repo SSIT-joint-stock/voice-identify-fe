@@ -15,6 +15,7 @@ interface VoiceEnrollDialogProps {
   onOpenChange: (open: boolean) => void;
   sourceFile: File | null;
   speakerItem?: VoiceIdentifyTwoItem | null;
+  onEnrollSuccess?: (data: VoiceIdentifyTwoItem) => void;
 }
 
 function formatSeconds(value: number) {
@@ -28,6 +29,7 @@ export function VoiceEnrollDialog({
   onOpenChange,
   sourceFile,
   speakerItem,
+  onEnrollSuccess,
 }: VoiceEnrollDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -81,7 +83,15 @@ export function VoiceEnrollDialog({
                 : undefined
             }
             compact
-            onUploadSuccess={() => onOpenChange(false)}
+            onUploadSuccess={(data) => {
+              if (data && speakerItem) {
+                onEnrollSuccess?.({
+                  ...speakerItem,
+                  ...data,
+                });
+              }
+              onOpenChange(false);
+            }}
           />
         </div>
       </DialogContent>

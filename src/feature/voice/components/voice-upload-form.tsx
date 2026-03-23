@@ -23,12 +23,13 @@ import { useUploadVoice } from '../hooks/use-voice';
 import { VoiceAudioDropzone } from './voice-audio-dropzone';
 import { VoiceAudioPlayer } from './voice-audio-player';
 import { cropAudioFile } from '@/utils/audio.utils';
+import type { VoiceIdentifyTwoItem } from '../types/voice.types';
 
 interface VoiceUploadFormProps {
   initialFile?: File | null;
   initialStart?: number;
   initialEnd?: number;
-  onUploadSuccess?: () => void;
+  onUploadSuccess?: (data?: Partial<VoiceIdentifyTwoItem>) => void;
   onFileChange?: () => void;
   compact?: boolean;
 }
@@ -117,6 +118,19 @@ export function VoiceUploadForm({
       await uploadMutation.mutateAsync({
         ...values,
         audioFile: fileToUpload,
+      });
+
+      // Construct partial result info to update UI immediately
+      onUploadSuccess?.({
+        matched_voice_id: 'pending', // Temporary or extracted from response if available
+        name: values.name.trim(),
+        citizen_identification: values.citizenIdentification.trim(),
+        phone_number: values.phoneNumber.trim(),
+        hometown: values.hometown.trim(),
+        job: values.job.trim(),
+        passport: values.passport.trim(),
+        message: 'Mới đăng ký',
+        score: 1.0,
       });
     } catch {
       // Error handled by useUploadVoice, but we catch to prevent unhandled rejections
