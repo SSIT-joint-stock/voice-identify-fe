@@ -1,74 +1,74 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, BookOpenText, Mic, Search } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { CircleUserRound, Info, MicVocal, Search } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { ROUTES } from "@/constants";
+import micWave from "@/assets/micwave.png";
+
+const quickActions = [
+  {
+    title: "ĐĂNG KÝ GIỌNG NÓI",
+    to: ROUTES.VOICE_ENROLL,
+    icon: MicVocal,
+  },
+  {
+    title: "TRA CỨU 1 NGƯỜI",
+    to: ROUTES.VOICE_SEARCH_SINGLE,
+    icon: Search,
+  },
+  {
+    title: "TRA CỨU 1-2 NGƯỜI",
+    to: ROUTES.VOICE_SEARCH_MULTI,
+    icon: CircleUserRound,
+  },
+  {
+    title: "HƯỚNG DẪN SỬ DỤNG",
+    to: ROUTES.VOICE_GUIDE,
+    icon: Info,
+  },
+];
 
 export default function Home() {
   return (
-    <div className="space-y-8">
-      <section className="rounded-3xl border bg-card p-8 shadow-sm">
-        <div className="mx-auto max-w-4xl space-y-4 text-center">
-          <p className="text-sm font-medium text-muted-foreground">
-            Speech-to-Text / Voice Identify
-          </p>
-          <h1 className="text-4xl font-bold tracking-tight">
-            Hệ thống nhận diện giọng nói theo luồng sử dụng thực tế
-          </h1>
-          <p className="text-muted-foreground">
-            Tách riêng trang tra cứu 1 người, tra cứu 1-2 người và trang đăng ký
-            để thao tác rõ ràng hơn, tránh dồn toàn bộ chức năng vào một màn
-            hình.
-          </p>
+    <div className="space-y-7">
+      <section className="rounded-[22px] bg-white px-8 py-8 shadow-[0_8px_24px_rgba(15,23,42,0.08)]">
+        <div className="grid items-center lg:grid-cols-[320px_minmax(0,1fr)] xl:grid-cols-[360px_minmax(0,1fr)]">
+          <div className="flex justify-center items-center lg:justify-start">
+            <img
+              src={micWave}
+              alt="Microphone and waveform"
+              className="h-auto w-full max-w-80 object-contain xl:max-w-80"
+            />
+          </div>
 
-          <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
-            <Button asChild size="lg" className="rounded-xl">
-              <Link to={ROUTES.VOICE_SEARCH_SINGLE}>
-                Mở tra cứu 1 người
-                <ArrowRight className="ml-2 size-4" />
-              </Link>
-            </Button>
-
-            <Button asChild size="lg" variant="outline" className="rounded-xl">
-              <Link to={ROUTES.VOICE_SEARCH_MULTI}>Mở tra cứu 1-2 người</Link>
-            </Button>
+          <div className="min-w-0">
+            <h1 className="font-serif text-[30px] font-bold leading-tight text-[#4b1d18] md:text-[40px] xl:text-[46px]">
+              Hệ thống nhận diện đối tượng dựa trên đặc điểm sinh trắc giọng nói
+              và dịch đa ngôn ngữ
+            </h1>
           </div>
         </div>
       </section>
 
-      <section className="grid gap-4 md:grid-cols-3">
-        <Card className="rounded-2xl">
-          <CardContent className="space-y-3 p-6">
-            <Search className="size-6" />
-            <h2 className="text-lg font-semibold">Tra cứu 1 người</h2>
-            <p className="text-sm text-muted-foreground">
-              Tải file audio có một người nói để nhận diện và hiển thị top 5 kết
-              quả phù hợp.
-            </p>
-          </CardContent>
-        </Card>
+      <section className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+        {quickActions.map((item) => {
+          const Icon = item.icon;
 
-        <Card className="rounded-2xl">
-          <CardContent className="space-y-3 p-6">
-            <Mic className="size-6" />
-            <h2 className="text-lg font-semibold">Đăng ký giọng nói</h2>
-            <p className="text-sm text-muted-foreground">
-              Tạo hồ sơ định danh và lưu mẫu giọng nói để phục vụ nhận diện về
-              sau.
-            </p>
-          </CardContent>
-        </Card>
+          return (
+            <Link key={item.title} to={item.to} className="block">
+              <Card className="h-full rounded-[18px] border-0 bg-white shadow-[0_8px_24px_rgba(15,23,42,0.08)] transition-transform duration-200 hover:-translate-y-1">
+                <CardContent className="flex min-h-32 flex-col items-center justify-center gap-4 px-6 py-8 text-center">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-full text-[#4b140c]">
+                    <Icon className="size-11 stroke-[1.8]" />
+                  </div>
 
-        <Card className="rounded-2xl">
-          <CardContent className="space-y-3 p-6">
-            <BookOpenText className="size-6" />
-            <h2 className="text-lg font-semibold">Hướng dẫn sử dụng</h2>
-            <p className="text-sm text-muted-foreground">
-              Gợi ý chuẩn bị file audio, lưu ý nghiệp vụ và các khuyến nghị khi
-              thao tác.
-            </p>
-          </CardContent>
-        </Card>
+                  <h2 className="text-[16px] font-bold tracking-wide text-[#4b140c] md:text-[17px]">
+                    {item.title}
+                  </h2>
+                </CardContent>
+              </Card>
+            </Link>
+          );
+        })}
       </section>
     </div>
   );
