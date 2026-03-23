@@ -39,17 +39,22 @@ function normalizeCriminalRecord(value: unknown): unknown[] {
 function normalizeIdentifyItem(item: unknown): VoiceIdentifyItem | null {
   if (!isRecord(item)) return null;
 
+  // Support nested match results if backend returns them grouped
+  const nested = isRecord(item.match) ? item.match : isRecord(item.result) ? item.result : null;
+
+  const data = nested || item;
+
   return {
-    message: asString(item.message, ''),
-    matched_voice_id: asString(item.matched_voice_id, ''),
-    score: asNumber(item.score),
-    name: asString(item.name, ''),
-    citizen_identification: asString(item.citizen_identification, ''),
-    phone_number: asString(item.phone_number, ''),
-    hometown: asString(item.hometown, ''),
-    job: asString(item.job, ''),
-    passport: asString(item.passport, ''),
-    criminal_record: normalizeCriminalRecord(item.criminal_record),
+    message: asString(data.message, asString(item.message, '')),
+    matched_voice_id: asString(data.matched_voice_id, ''),
+    score: asNumber(data.score),
+    name: asString(data.name, ''),
+    citizen_identification: asString(data.citizen_identification, ''),
+    phone_number: asString(data.phone_number, ''),
+    hometown: asString(data.hometown, ''),
+    job: asString(data.job, ''),
+    passport: asString(data.passport, ''),
+    criminal_record: normalizeCriminalRecord(data.criminal_record),
   };
 }
 
@@ -138,13 +143,17 @@ export const voiceApi = {
       },
     });
 
-    const items = asArray<unknown>(response.data)
+    const data = response.data;
+    // Handle both array and object responses (e.g. { "0": {...}, "1": {...} })
+    const rawItems = Array.isArray(data) ? data : isRecord(data) ? Object.values(data) : [];
+
+    const items = rawItems
       .map(normalizeIdentifyTwoItem)
       .filter((item): item is VoiceIdentifyTwoItem => item !== null);
 
     return {
       items,
-      raw: response.data,
+      raw: data,
     };
   },
 };

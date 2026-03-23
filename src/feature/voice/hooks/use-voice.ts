@@ -1,13 +1,13 @@
-import { useMutation } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { formatError } from "@/utils";
-import { voiceApi } from "../api/voice.api";
-import { useVoiceStore } from "../store/voice.store";
+import { useMutation } from '@tanstack/react-query';
+import { toast } from 'sonner';
+import { formatError } from '@/utils';
+import { voiceApi } from '../api/voice.api';
+import { useVoiceStore } from '../store/voice.store';
 import type {
   IdentifyTwoVoiceSchemaOutput,
   IdentifyVoiceSchemaOutput,
   UploadVoiceSchemaOutput,
-} from "../schemas/voice.schema";
+} from '../schemas/voice.schema';
 
 interface UploadVoiceOptions {
   onSuccess?: () => void;
@@ -48,7 +48,7 @@ export function useUploadVoice(options?: UploadVoiceOptions) {
     },
     onSuccess: (data) => {
       setUploadResult(data);
-      toast.success(data.message || "Upload voice thành công.");
+      toast.success(data.message || 'Upload voice thành công.');
       options?.onSuccess?.();
     },
     onError: (error) => {
@@ -70,7 +70,7 @@ export function useIdentifyVoice(options?: IdentifyVoiceOptions) {
       setIdentifyResult(data);
 
       if (data.items.length === 0) {
-        toast.error("Không có kết quả phù hợp.");
+        toast.error('Không có kết quả phù hợp.');
         options?.onSuccess?.();
         return;
       }
@@ -85,9 +85,7 @@ export function useIdentifyVoice(options?: IdentifyVoiceOptions) {
 }
 
 export function useIdentifyTwoVoice(options?: IdentifyTwoVoiceOptions) {
-  const setIdentifyTwoResult = useVoiceStore(
-    (state) => state.setIdentifyTwoResult
-  );
+  const setIdentifyTwoResult = useVoiceStore((state) => state.setIdentifyTwoResult);
   const openErrorDialog = useVoiceStore((state) => state.openErrorDialog);
 
   return useMutation({
@@ -101,15 +99,15 @@ export function useIdentifyTwoVoice(options?: IdentifyTwoVoiceOptions) {
 
       const overCapacityItem = data.items.find(
         (item) =>
-          item.message === "Number of speakers exceeds system capacity" ||
-          (typeof item.num_speakers === "number" && item.num_speakers > 2)
+          item.message === 'Number of speakers exceeds system capacity' ||
+          (typeof item.num_speakers === 'number' && item.num_speakers > 2)
       );
 
       if (overCapacityItem) {
         openErrorDialog(
-          "Số lượng người nói vượt quá giới hạn",
+          'Số lượng người nói vượt quá giới hạn',
           `Hệ thống chỉ hỗ trợ tối đa 2 người nói. Giá trị hiện tại: ${
-            overCapacityItem.num_speakers ?? "không xác định"
+            overCapacityItem.num_speakers ?? 'không xác định'
           }.`
         );
         options?.onSuccess?.();
@@ -117,7 +115,7 @@ export function useIdentifyTwoVoice(options?: IdentifyTwoVoiceOptions) {
       }
 
       if (data.items.length === 0) {
-        toast.error("Không có dữ liệu nhận diện.");
+        toast.error('Không có dữ liệu nhận diện.');
         options?.onSuccess?.();
         return;
       }

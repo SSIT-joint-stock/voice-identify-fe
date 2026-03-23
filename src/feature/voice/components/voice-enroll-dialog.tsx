@@ -4,11 +4,11 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
-} from "@/components/ui/dialog";
-import { Badge } from "@/components/ui/badge";
-import { VoiceUploadForm } from "./voice-upload-form";
-import { VoiceAudioPlayer } from "./voice-audio-player";
-import type { VoiceIdentifyTwoItem } from "../types/voice.types";
+} from '@/components/ui/dialog';
+import { Badge } from '@/components/ui/badge';
+import { VoiceUploadForm } from './voice-upload-form';
+import { VoiceAudioPlayer } from './voice-audio-player';
+import type { VoiceIdentifyTwoItem } from '../types/voice.types';
 
 interface VoiceEnrollDialogProps {
   open: boolean;
@@ -20,10 +20,7 @@ interface VoiceEnrollDialogProps {
 function formatSeconds(value: number) {
   const minutes = Math.floor(value / 60);
   const seconds = Math.floor(value % 60);
-  return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(
-    2,
-    "0"
-  )}`;
+  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 }
 
 export function VoiceEnrollDialog({
@@ -40,8 +37,8 @@ export function VoiceEnrollDialog({
           <DialogDescription>
             Mở form đăng ký để lưu thông tin người nói chưa có trên hệ thống.
             {speakerItem?.audio_segment?.length
-              ? " Có kèm thông tin segment để đối chiếu khi thao tác."
-              : ""}
+              ? ' Có kèm thông tin segment để đối chiếu khi thao tác.'
+              : ''}
           </DialogDescription>
         </DialogHeader>
 
@@ -57,12 +54,8 @@ export function VoiceEnrollDialog({
               <p className="text-sm font-medium">Timestamp speaker</p>
               <div className="flex flex-wrap gap-2">
                 {speakerItem.audio_segment.map((segment, index) => (
-                  <Badge
-                    key={`${segment.start}-${segment.end}-${index}`}
-                    variant="secondary"
-                  >
-                    {formatSeconds(segment.start)} -{" "}
-                    {formatSeconds(segment.end)}
+                  <Badge key={`${segment.start}-${segment.end}-${index}`} variant="secondary">
+                    {formatSeconds(segment.start)} - {formatSeconds(segment.end)}
                   </Badge>
                 ))}
               </div>
@@ -73,6 +66,20 @@ export function VoiceEnrollDialog({
 
           <VoiceUploadForm
             initialFile={sourceFile}
+            initialStart={
+              speakerItem?.audio_segment && speakerItem.audio_segment.length > 0
+                ? [...speakerItem.audio_segment].sort(
+                    (a, b) => b.end - b.start - (a.end - a.start)
+                  )[0].start
+                : undefined
+            }
+            initialEnd={
+              speakerItem?.audio_segment && speakerItem.audio_segment.length > 0
+                ? [...speakerItem.audio_segment].sort(
+                    (a, b) => b.end - b.start - (a.end - a.start)
+                  )[0].end
+                : undefined
+            }
             compact
             onUploadSuccess={() => onOpenChange(false)}
           />

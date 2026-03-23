@@ -17,6 +17,8 @@ export interface UploadVoiceFormValues {
   passport: string;
   criminalRecord: string;
   audioFile: File | null;
+  start?: number;
+  end?: number;
 }
 
 export interface IdentifyVoiceFormValues {

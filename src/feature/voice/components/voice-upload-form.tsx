@@ -1,19 +1,9 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  useFieldArray,
-  useForm,
-  useWatch,
-  type SubmitHandler,
-} from "react-hook-form";
-import { LoaderCircle, Plus, Trash2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useFieldArray, useForm, useWatch, type SubmitHandler } from 'react-hook-form';
+import { LoaderCircle, Plus, Trash2 } from 'lucide-react';
+import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import {
   Form,
   FormControl,
@@ -22,19 +12,22 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
 import {
   uploadVoiceSchema,
   type UploadVoiceSchemaInput,
   type UploadVoiceSchemaOutput,
-} from "../schemas/voice.schema";
-import { useUploadVoice } from "../hooks/use-voice";
-import { VoiceAudioDropzone } from "./voice-audio-dropzone";
-import { VoiceAudioPlayer } from "./voice-audio-player";
+} from '../schemas/voice.schema';
+import { useUploadVoice } from '../hooks/use-voice';
+import { VoiceAudioDropzone } from './voice-audio-dropzone';
+import { VoiceAudioPlayer } from './voice-audio-player';
+import { cropAudioFile } from '@/utils/audio.utils';
 
 interface VoiceUploadFormProps {
   initialFile?: File | null;
+  initialStart?: number;
+  initialEnd?: number;
   onUploadSuccess?: () => void;
   onFileChange?: () => void;
   compact?: boolean;
@@ -49,65 +42,94 @@ const YEAR_OPTIONS = getYearOptions();
 
 export function VoiceUploadForm({
   initialFile = null,
+  initialStart,
+  initialEnd,
   onUploadSuccess,
   onFileChange,
   compact = false,
 }: VoiceUploadFormProps) {
-  const form = useForm<
-    UploadVoiceSchemaInput,
-    unknown,
-    UploadVoiceSchemaOutput
-  >({
+  const form = useForm<UploadVoiceSchemaInput, unknown, UploadVoiceSchemaOutput>({
     resolver: zodResolver(uploadVoiceSchema),
     defaultValues: {
-      name: "",
-      citizenIdentification: "",
-      phoneNumber: "",
-      hometown: "",
-      job: "",
-      passport: "",
+      name: '',
+      citizenIdentification: '',
+      phoneNumber: '',
+      hometown: '',
+      job: '',
+      passport: '',
       criminalRecords: [],
       audioFile: initialFile,
+      start: initialStart,
+      end: initialEnd,
     },
   });
 
   const watchedAudioFile = useWatch({
     control: form.control,
-    name: "audioFile",
+    name: 'audioFile',
   });
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
-    name: "criminalRecords",
+    name: 'criminalRecords',
   });
 
   const uploadMutation = useUploadVoice({
     onSuccess: () => {
       form.reset({
-        name: "",
-        citizenIdentification: "",
-        phoneNumber: "",
-        hometown: "",
-        job: "",
-        passport: "",
+        name: '',
+        citizenIdentification: '',
+        phoneNumber: '',
+        hometown: '',
+        job: '',
+        passport: '',
         criminalRecords: [],
         audioFile: initialFile,
+        start: initialStart,
+        end: initialEnd,
       });
       onUploadSuccess?.();
     },
   });
 
   const onSubmit: SubmitHandler<UploadVoiceSchemaOutput> = async (values) => {
-    await uploadMutation.mutateAsync(values);
+    try {
+      let fileToUpload = values.audioFile;
+
+      if (fileToUpload && typeof initialStart === 'number' && typeof initialEnd === 'number') {
+        const loadingToast = toast.loading('Đang xử lý cắt âm thanh...');
+        try {
+          fileToUpload = await cropAudioFile(fileToUpload, initialStart, initialEnd);
+          toast.success('Đã xử lý âm thanh đoạn chọn.', { id: loadingToast });
+        } catch (cropError) {
+          toast.error('Lỗi khi cắt âm thanh: ' + (cropError as Error).message, {
+            id: loadingToast,
+          });
+          return;
+        }
+      }
+
+      if (!fileToUpload) {
+        toast.error('Vui lòng chọn file audio.');
+        return;
+      }
+
+      await uploadMutation.mutateAsync({
+        ...values,
+        audioFile: fileToUpload,
+      });
+    } catch {
+      // Error handled by useUploadVoice, but we catch to prevent unhandled rejections
+    }
   };
 
   return (
     <Card className="rounded-2xl">
-      <CardHeader className={compact ? "pb-3" : undefined}>
+      <CardHeader className={compact ? 'pb-3' : undefined}>
         <CardTitle>Đăng ký giọng nói</CardTitle>
         <CardDescription>
-          Theo spec API: thông tin cá nhân đi bằng query params, còn file và
-          criminal_record đi bằng form-data.
+          Theo spec API: thông tin cá nhân đi bằng query params, còn file và criminal_record đi bằng
+          form-data.
         </CardDescription>
       </CardHeader>
 
@@ -205,15 +227,15 @@ export function VoiceUploadForm({
                 <div>
                   <FormLabel>Criminal record</FormLabel>
                   <FormDescription>
-                    Thêm từng mục tiền án / tiền sự. Hệ thống sẽ tự đóng gói
-                    thành JSON gửi lên server.
+                    Thêm từng mục tiền án / tiền sự. Hệ thống sẽ tự đóng gói thành JSON gửi lên
+                    server.
                   </FormDescription>
                 </div>
 
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => append({ case: "", year: "" })}
+                  onClick={() => append({ case: '', year: '' })}
                 >
                   <Plus className="mr-2 size-4" />
                   Thêm mục
@@ -222,8 +244,7 @@ export function VoiceUploadForm({
 
               {fields.length === 0 ? (
                 <div className="rounded-xl border border-dashed p-4 text-sm text-muted-foreground">
-                  Chưa có mục nào. Nếu không có tiền án / tiền sự, hệ thống sẽ
-                  gửi [].
+                  Chưa có mục nào. Nếu không có tiền án / tiền sự, hệ thống sẽ gửi [].
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -239,10 +260,7 @@ export function VoiceUploadForm({
                           <FormItem>
                             <FormLabel>Nội dung</FormLabel>
                             <FormControl>
-                              <Input
-                                placeholder="Ví dụ: Tội trộm cắp"
-                                {...field}
-                              />
+                              <Input placeholder="Ví dụ: Tội trộm cắp" {...field} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -313,10 +331,7 @@ export function VoiceUploadForm({
               )}
             />
 
-            <VoiceAudioPlayer
-              file={watchedAudioFile ?? null}
-              title="Audio đăng ký"
-            />
+            <VoiceAudioPlayer file={watchedAudioFile ?? null} title="Audio đăng ký" />
 
             <Button type="submit" disabled={uploadMutation.isPending}>
               {uploadMutation.isPending ? (
@@ -325,7 +340,7 @@ export function VoiceUploadForm({
                   Đang upload...
                 </>
               ) : (
-                "Upload voice"
+                'Upload voice'
               )}
             </Button>
           </form>

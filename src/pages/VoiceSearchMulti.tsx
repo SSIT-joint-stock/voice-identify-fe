@@ -1,25 +1,20 @@
-import { UsersRound } from "lucide-react";
-import { useEffect, useState } from "react";
-import { VoiceErrorDialog } from "@/feature/voice/components/voice-error-dialog";
-import { VoiceMultiSearchForm } from "@/feature/voice/components/voice-multi-search-form";
-import { VoiceAudioPlayer } from "@/feature/voice/components/voice-audio-player";
-import { VoiceSpeakerResultCard } from "@/feature/voice/components/voice-speaker-result-card";
-import { VoiceEnrollDialog } from "@/feature/voice/components/voice-enroll-dialog";
-import { useVoiceStore } from "@/feature/voice";
-import type { VoiceIdentifyTwoItem } from "@/feature/voice/types/voice.types";
+import { UsersRound } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { VoiceErrorDialog } from '@/feature/voice/components/voice-error-dialog';
+import { VoiceMultiSearchForm } from '@/feature/voice/components/voice-multi-search-form';
+import { VoiceAudioPlayer } from '@/feature/voice/components/voice-audio-player';
+import { VoiceSpeakerResultCard } from '@/feature/voice/components/voice-speaker-result-card';
+import { VoiceEnrollDialog } from '@/feature/voice/components/voice-enroll-dialog';
+import { useVoiceStore } from '@/feature/voice';
+import type { VoiceIdentifyTwoItem } from '@/feature/voice/types/voice.types';
 
 export default function VoiceSearchMulti() {
-  const {
-    identifyTwoResult,
-    errorDialog,
-    closeErrorDialog,
-    resetIdentifyTwoResult,
-  } = useVoiceStore();
+  const { identifyTwoResult, errorDialog, closeErrorDialog, resetIdentifyTwoResult } =
+    useVoiceStore();
 
   const [audioFile, setAudioFile] = useState<File | null>(null);
   const [openEnrollDialog, setOpenEnrollDialog] = useState(false);
-  const [selectedUnknownItem, setSelectedUnknownItem] =
-    useState<VoiceIdentifyTwoItem | null>(null);
+  const [selectedUnknownItem, setSelectedUnknownItem] = useState<VoiceIdentifyTwoItem | null>(null);
   const [selectedSegment, setSelectedSegment] = useState<{
     start?: number;
     end?: number;
@@ -33,6 +28,7 @@ export default function VoiceSearchMulti() {
   }, [resetIdentifyTwoResult]);
 
   const items = identifyTwoResult?.items ?? [];
+  console.log(identifyTwoResult);
 
   return (
     <>
@@ -43,13 +39,10 @@ export default function VoiceSearchMulti() {
               <UsersRound className="size-4" />
               Tra cứu 1-2 người
             </div>
-            <h1 className="text-3xl font-bold tracking-tight">
-              Nhận diện giọng nói 1-2 người
-            </h1>
+            <h1 className="text-3xl font-bold tracking-tight">Nhận diện giọng nói 1-2 người</h1>
             <p className="max-w-3xl text-sm text-muted-foreground">
-              Tải file audio có tối đa 2 người nói. Hệ thống sẽ hiển thị kết quả
-              theo từng speaker, kèm segment thời gian và hành động đăng ký nếu
-              chưa có dữ liệu phù hợp.
+              Tải file audio có tối đa 2 người nói. Hệ thống sẽ hiển thị kết quả theo từng speaker,
+              kèm segment thời gian và hành động đăng ký nếu chưa có dữ liệu phù hợp.
             </p>
           </div>
         </section>
@@ -75,14 +68,11 @@ export default function VoiceSearchMulti() {
           {items.length > 0 ? (
             items.map((item, index) => (
               <VoiceSpeakerResultCard
-                key={`${
-                  item.matched_voice_id || item.name || item.message
-                }-${index}`}
+                key={`${item.matched_voice_id || item.name || item.message}-${index}`}
                 title={`Người nói ${index + 1}`}
                 item={item}
-                onSelectSegment={(start, end) =>
-                  setSelectedSegment({ start, end })
-                }
+                speakerIndex={index}
+                onSelectSegment={(start, end) => setSelectedSegment({ start, end })}
                 onRegisterUnknown={() => {
                   setSelectedUnknownItem(item);
                   setOpenEnrollDialog(true);
