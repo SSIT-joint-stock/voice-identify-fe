@@ -31,6 +31,17 @@ function formatSeconds(value: number) {
   )}`;
 }
 
+function isUnknownSpeaker(item: VoiceIdentifyTwoItem) {
+  const message = (item.message || "").toLowerCase();
+
+  return (
+    !item.matched_voice_id ||
+    message.includes("no matching") ||
+    message.includes("unknown") ||
+    message.includes("not found")
+  );
+}
+
 export function VoiceSpeakerResultCard({
   title,
   item,
@@ -39,9 +50,7 @@ export function VoiceSpeakerResultCard({
 }: VoiceSpeakerResultCardProps) {
   const [selectedStart, setSelectedStart] = useState<number | undefined>();
 
-  const isUnknown =
-    !item.matched_voice_id || item.message === "No matching voice found";
-
+  const isUnknown = isUnknownSpeaker(item);
   const top5Items: VoiceIdentifyItem[] = isUnknown ? [] : [item];
 
   return (
@@ -101,9 +110,8 @@ export function VoiceSpeakerResultCard({
         ) : (
           <div className="rounded-2xl border border-dashed p-4">
             <div className="space-y-2">
-              <p className="font-medium">Chưa tìm thấy người phù hợp</p>
               <p className="text-sm text-muted-foreground">
-                Có thể mở popup để đăng ký người nói này lên hệ thống.
+                Chưa tìm thấy người phù hợp
               </p>
               <Button type="button" onClick={onRegisterUnknown}>
                 Đăng ký giọng nói

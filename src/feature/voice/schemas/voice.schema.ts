@@ -25,18 +25,14 @@ const audioFileSchema = z
   )
   .transform((file) => file as File);
 
-const criminalRecordJsonSchema = z
-  .string()
-  .trim()
-  .min(1, "Vui lòng nhập criminal_record.")
-  .refine((value) => {
-    try {
-      const parsed = JSON.parse(value);
-      return Array.isArray(parsed);
-    } catch {
-      return false;
-    }
-  }, "criminal_record phải là JSON array hợp lệ. Ví dụ: []");
+const criminalRecordItemSchema = z.object({
+  case: z.string().trim().min(1, "Vui lòng nhập nội dung tiền án / tiền sự."),
+  year: z
+    .string()
+    .trim()
+    .min(1, "Vui lòng chọn năm.")
+    .refine((value) => /^\d{4}$/.test(value), "Năm không hợp lệ."),
+});
 
 export const uploadVoiceSchema = z.object({
   name: z.string().trim().min(1, "Vui lòng nhập họ tên."),
@@ -45,7 +41,7 @@ export const uploadVoiceSchema = z.object({
   hometown: z.string().trim().min(1, "Vui lòng nhập quê quán."),
   job: z.string().trim().min(1, "Vui lòng nhập nghề nghiệp."),
   passport: z.string().trim().min(1, "Vui lòng nhập số hộ chiếu."),
-  criminalRecord: criminalRecordJsonSchema,
+  criminalRecords: z.array(criminalRecordItemSchema).default([]),
   audioFile: audioFileSchema,
 });
 

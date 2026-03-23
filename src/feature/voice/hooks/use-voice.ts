@@ -26,6 +26,15 @@ export function useUploadVoice(options?: UploadVoiceOptions) {
 
   return useMutation({
     mutationFn: async (values: UploadVoiceSchemaOutput) => {
+      const criminalRecordPayload = JSON.stringify(
+        (values.criminalRecords ?? [])
+          .filter((item) => item.case.trim() && item.year.trim())
+          .map((item) => ({
+            case: item.case.trim(),
+            year: Number(item.year),
+          }))
+      );
+
       return voiceApi.uploadVoice({
         name: values.name.trim(),
         citizen_identification: values.citizenIdentification.trim(),
@@ -33,7 +42,7 @@ export function useUploadVoice(options?: UploadVoiceOptions) {
         hometown: values.hometown.trim(),
         job: values.job.trim(),
         passport: values.passport.trim(),
-        criminal_record: values.criminalRecord.trim(),
+        criminal_record: criminalRecordPayload,
         file: values.audioFile,
       });
     },

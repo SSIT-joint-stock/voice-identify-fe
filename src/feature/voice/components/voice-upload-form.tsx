@@ -1,6 +1,11 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, type SubmitHandler } from "react-hook-form";
-import { LoaderCircle } from "lucide-react";
+import {
+  useFieldArray,
+  useForm,
+  useWatch,
+  type SubmitHandler,
+} from "react-hook-form";
+import { LoaderCircle, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -19,7 +24,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import {
   uploadVoiceSchema,
   type UploadVoiceSchemaInput,
@@ -27,16 +31,26 @@ import {
 } from "../schemas/voice.schema";
 import { useUploadVoice } from "../hooks/use-voice";
 import { VoiceAudioDropzone } from "./voice-audio-dropzone";
+import { VoiceAudioPlayer } from "./voice-audio-player";
 
 interface VoiceUploadFormProps {
   initialFile?: File | null;
   onUploadSuccess?: () => void;
+  onFileChange?: () => void;
   compact?: boolean;
 }
+
+function getYearOptions() {
+  const currentYear = new Date().getFullYear();
+  return Array.from({ length: 50 }, (_, index) => String(currentYear - index));
+}
+
+const YEAR_OPTIONS = getYearOptions();
 
 export function VoiceUploadForm({
   initialFile = null,
   onUploadSuccess,
+  onFileChange,
   compact = false,
 }: VoiceUploadFormProps) {
   const form = useForm<
@@ -52,9 +66,19 @@ export function VoiceUploadForm({
       hometown: "",
       job: "",
       passport: "",
-      criminalRecord: "[]",
+      criminalRecords: [],
       audioFile: initialFile,
     },
+  });
+
+  const watchedAudioFile = useWatch({
+    control: form.control,
+    name: "audioFile",
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "criminalRecords",
   });
 
   const uploadMutation = useUploadVoice({
@@ -66,7 +90,7 @@ export function VoiceUploadForm({
         hometown: "",
         job: "",
         passport: "",
-        criminalRecord: "[]",
+        criminalRecords: [],
         audioFile: initialFile,
       });
       onUploadSuccess?.();
@@ -176,29 +200,96 @@ export function VoiceUploadForm({
               />
             </div>
 
-            <FormField
-              control={form.control}
-              name="criminalRecord"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Criminal record (JSON array)</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      rows={5}
-                      placeholder={
-                        '[]\nhoặc\n[{"case":"Tội trộm cắp","year":2020}]'
-                      }
-                      {...field}
-                    />
-                  </FormControl>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <FormLabel>Criminal record</FormLabel>
                   <FormDescription>
-                    Theo spec phải là chuỗi JSON array. Ví dụ: [] hoặc
-                    [&#123;"case":"Tội trộm cắp","year":2020&#125;]
+                    Thêm từng mục tiền án / tiền sự. Hệ thống sẽ tự đóng gói
+                    thành JSON gửi lên server.
                   </FormDescription>
-                  <FormMessage />
-                </FormItem>
+                </div>
+
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => append({ case: "", year: "" })}
+                >
+                  <Plus className="mr-2 size-4" />
+                  Thêm mục
+                </Button>
+              </div>
+
+              {fields.length === 0 ? (
+                <div className="rounded-xl border border-dashed p-4 text-sm text-muted-foreground">
+                  Chưa có mục nào. Nếu không có tiền án / tiền sự, hệ thống sẽ
+                  gửi [].
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {fields.map((fieldItem, index) => (
+                    <div
+                      key={fieldItem.id}
+                      className="grid gap-4 rounded-xl border p-4 md:grid-cols-[1fr_180px_auto]"
+                    >
+                      <FormField
+                        control={form.control}
+                        name={`criminalRecords.${index}.case`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Nội dung</FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder="Ví dụ: Tội trộm cắp"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name={`criminalRecords.${index}.year`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Năm</FormLabel>
+                            <FormControl>
+                              <select
+                                value={field.value}
+                                onChange={field.onChange}
+                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background"
+                              >
+                                <option value="">Chọn năm</option>
+                                {YEAR_OPTIONS.map((year) => (
+                                  <option key={year} value={year}>
+                                    {year}
+                                  </option>
+                                ))}
+                              </select>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <div className="flex items-end">
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          onClick={() => remove(index)}
+                          className="w-full md:w-auto"
+                        >
+                          <Trash2 className="mr-2 size-4" />
+                          Xóa
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               )}
-            />
+            </div>
 
             <FormField
               control={form.control}
@@ -209,7 +300,10 @@ export function VoiceUploadForm({
                   <FormControl>
                     <VoiceAudioDropzone
                       value={field.value ?? null}
-                      onChange={field.onChange}
+                      onChange={(file) => {
+                        field.onChange(file);
+                        onFileChange?.();
+                      }}
                       disabled={uploadMutation.isPending}
                       error={fieldState.error?.message}
                     />
@@ -217,6 +311,11 @@ export function VoiceUploadForm({
                   <FormMessage />
                 </FormItem>
               )}
+            />
+
+            <VoiceAudioPlayer
+              file={watchedAudioFile ?? null}
+              title="Audio đăng ký"
             />
 
             <Button type="submit" disabled={uploadMutation.isPending}>

@@ -20,6 +20,10 @@ export default function VoiceSearchMulti() {
   const [openEnrollDialog, setOpenEnrollDialog] = useState(false);
   const [selectedUnknownItem, setSelectedUnknownItem] =
     useState<VoiceIdentifyTwoItem | null>(null);
+  const [selectedSegment, setSelectedSegment] = useState<{
+    start?: number;
+    end?: number;
+  }>({});
 
   useEffect(() => {
     resetIdentifyTwoResult();
@@ -55,11 +59,17 @@ export default function VoiceSearchMulti() {
             setAudioFile(file);
             setSelectedUnknownItem(null);
             setOpenEnrollDialog(false);
+            setSelectedSegment({});
             resetIdentifyTwoResult();
           }}
         />
 
-        <VoiceAudioPlayer file={audioFile} title="Audio tra cứu 1-2 người" />
+        <VoiceAudioPlayer
+          file={audioFile}
+          title="Audio tra cứu 1-2 người"
+          startAt={selectedSegment.start}
+          endAt={selectedSegment.end}
+        />
 
         <div className="grid gap-6 xl:grid-cols-2">
           {items.length > 0 ? (
@@ -70,7 +80,9 @@ export default function VoiceSearchMulti() {
                 }-${index}`}
                 title={`Người nói ${index + 1}`}
                 item={item}
-                sourceFile={audioFile}
+                onSelectSegment={(start, end) =>
+                  setSelectedSegment({ start, end })
+                }
                 onRegisterUnknown={() => {
                   setSelectedUnknownItem(item);
                   setOpenEnrollDialog(true);

@@ -1,10 +1,18 @@
 import { Mic, FileAudio, ShieldCheck } from "lucide-react";
+import { useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { VoiceUploadForm } from "@/feature/voice/components/voice-upload-form";
 import { useVoiceStore } from "@/feature/voice";
 
 export default function VoiceEnroll() {
-  const { uploadResult } = useVoiceStore();
+  const { uploadResult, resetUploadResult } = useVoiceStore();
+
+  useEffect(() => {
+    resetUploadResult();
+    return () => {
+      resetUploadResult();
+    };
+  }, [resetUploadResult]);
 
   return (
     <div className="space-y-6">
@@ -48,7 +56,7 @@ export default function VoiceEnroll() {
         </div>
       </section>
 
-      <VoiceUploadForm />
+      <VoiceUploadForm onFileChange={resetUploadResult} />
 
       {uploadResult ? (
         <Card className="rounded-2xl border-green-200">

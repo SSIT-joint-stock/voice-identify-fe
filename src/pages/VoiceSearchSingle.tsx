@@ -7,6 +7,20 @@ import { VoiceTop5MatchTable } from "@/feature/voice/components/voice-top5-match
 import { VoiceEnrollDialog } from "@/feature/voice/components/voice-enroll-dialog";
 import { useVoiceStore } from "@/feature/voice";
 
+function isUnknownSingle(item: {
+  matched_voice_id?: string;
+  message?: string;
+}) {
+  const message = (item.message || "").toLowerCase();
+
+  return (
+    !item.matched_voice_id ||
+    message.includes("no matching") ||
+    message.includes("unknown") ||
+    message.includes("not found")
+  );
+}
+
 export default function VoiceSearchSingle() {
   const { identifyResult, errorDialog, closeErrorDialog, resetIdentifyResult } =
     useVoiceStore();
@@ -22,9 +36,7 @@ export default function VoiceSearchSingle() {
   }, [resetIdentifyResult]);
 
   const items = identifyResult?.items ?? [];
-  const hasKnownMatch = items.some(
-    (item) => item.message !== "No matching voice found"
-  );
+  const hasKnownMatch = items.some((item) => !isUnknownSingle(item));
   const shouldShowUnknownCta = items.length === 0 || !hasKnownMatch;
 
   return (
