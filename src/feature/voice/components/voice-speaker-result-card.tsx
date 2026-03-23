@@ -1,15 +1,13 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
-  CardDescription,
 } from "@/components/ui/card";
 import { VoiceTop5MatchTable } from "./voice-top5-match-table";
-import { VoiceAudioPlayer } from "./voice-audio-player";
 import type {
   VoiceIdentifyItem,
   VoiceIdentifyTwoItem,
@@ -18,8 +16,8 @@ import type {
 interface VoiceSpeakerResultCardProps {
   title: string;
   item: VoiceIdentifyTwoItem;
-  sourceFile: File | null;
   onRegisterUnknown: () => void;
+  onSelectSegment?: (start: number, end?: number) => void;
 }
 
 function formatSeconds(value: number) {
@@ -45,11 +43,9 @@ function isUnknownSpeaker(item: VoiceIdentifyTwoItem) {
 export function VoiceSpeakerResultCard({
   title,
   item,
-  sourceFile,
   onRegisterUnknown,
+  onSelectSegment,
 }: VoiceSpeakerResultCardProps) {
-  const [selectedStart, setSelectedStart] = useState<number | undefined>();
-
   const isUnknown = isUnknownSpeaker(item);
   const top5Items: VoiceIdentifyItem[] = isUnknown ? [] : [item];
 
@@ -85,7 +81,7 @@ export function VoiceSpeakerResultCard({
                   type="button"
                   variant="outline"
                   size="sm"
-                  onClick={() => setSelectedStart(segment.start)}
+                  onClick={() => onSelectSegment?.(segment.start, segment.end)}
                 >
                   {formatSeconds(segment.start)} - {formatSeconds(segment.end)}
                 </Button>
@@ -93,12 +89,6 @@ export function VoiceSpeakerResultCard({
             </div>
           </div>
         ) : null}
-
-        <VoiceAudioPlayer
-          file={sourceFile}
-          title="Audio speaker"
-          startAt={selectedStart}
-        />
 
         {!isUnknown ? (
           <VoiceTop5MatchTable
