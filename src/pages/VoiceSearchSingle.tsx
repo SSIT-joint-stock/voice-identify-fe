@@ -69,7 +69,7 @@ export default function VoiceSearchSingle() {
         <VoiceAudioPlayer file={audioFile} title="Audio tra cứu" />
 
         <VoiceTop5MatchTable
-          title="Top 5 kết quả phù hợp"
+          title="Kết quả phù hợp"
           description="Kết quả được sắp xếp theo điểm số giảm dần."
           items={items}
           emptyText="Chưa có kết quả nhận diện."

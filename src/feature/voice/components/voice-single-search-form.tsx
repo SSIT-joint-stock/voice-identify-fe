@@ -54,9 +54,7 @@ export function VoiceSingleSearchForm({
     <Card className="rounded-2xl">
       <CardHeader>
         <CardTitle>Tra cứu 1 người</CardTitle>
-        <CardDescription>
-          Tải một file audio để nhận diện top 5 kết quả phù hợp nhất.
-        </CardDescription>
+        <CardDescription>Tải một file audio để nhận diện</CardDescription>
       </CardHeader>
 
       <CardContent>

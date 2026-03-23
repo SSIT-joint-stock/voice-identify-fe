@@ -1,4 +1,4 @@
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import { Outlet } from "react-router-dom";
 import headerBg from "@/assets/header1.webp";
@@ -30,23 +30,13 @@ export function MainLayout() {
                 className=" h-14 w-14 shrink-0 object-contain md:h-16 md:w-16"
               />
 
-              <div className="space-y-1 text-[#f7d77c]">
-                <p className="text-sm font-medium tracking-wide md:text-base">
+              <div className=" text-[#fad29e]">
+                <p className="text-xsm font-sans font-light tracking-wide md:text-base">
                   CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM
                 </p>
-                <p className="text-base font-bold tracking-wide md:text-[18px]">
+                <p className="text-big font-sans font-bold tracking-wide md:text-[18px]">
                   BỘ CÔNG AN
                 </p>
-              </div>
-            </div>
-
-            <div className="min-w-0 flex-1 pt-8 md:pt-10">
-              <h1 className="max-w-6xl font-serif text-[28px] font-bold leading-tight text-[#f3d27a] drop-shadow-[0_2px_2px_rgba(0,0,0,0.18)] md:text-[36px] xl:text-[42px]"></h1>
-            </div>
-
-            <div className="pt-1">
-              <div className="rounded-md border border-[#f3d27a]/40 bg-white/10 backdrop-blur-sm">
-                <SidebarTrigger className="h-10 w-10 text-white hover:bg-white/10 hover:text-white" />
               </div>
             </div>
           </div>

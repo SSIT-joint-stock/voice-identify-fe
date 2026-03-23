@@ -1,9 +1,14 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/inter";
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap");
 
 @custom-variant dark (&:is(.dark *));
+
+@theme {
+  --font-sans: "Roboto", sans-serif;
+}
 
 /* =====================
    Base / Reset
@@ -50,6 +55,18 @@
   }
   * {
     @apply border-border outline-ring/50;
+  }
+  /* Ẩn scrollbar cho toàn bộ trang */
+  html,
+  body {
+    -ms-overflow-style: none; /* IE và Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+
+  /* Ẩn cho Chrome, Safari và Opera */
+  html::-webkit-scrollbar,
+  body::-webkit-scrollbar {
+    display: none;
   }
 }
 
@@ -135,7 +152,7 @@
 }
 
 @theme inline {
-  --font-sans: 'Inter Variable', sans-serif;
+  --font-sans: "Inter Variable", sans-serif;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
