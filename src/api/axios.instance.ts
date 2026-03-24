@@ -8,6 +8,7 @@ const axiosInstance: AxiosInstance = axios.create({
   timeout: 30_000,
   headers: {
     Accept: 'application/json',
+    'ngrok-skip-browser-warning': 'true',
   },
 });
 
