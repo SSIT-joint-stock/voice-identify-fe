@@ -1,5 +1,12 @@
 import * as React from "react";
-import { BookOpenText, Home, Mic, Search, UsersRound } from "lucide-react";
+import {
+  BookOpenText,
+  Home,
+  Languages,
+  Mic,
+  Search,
+  UsersRound,
+} from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 
 import {
@@ -20,6 +27,11 @@ const navigation = [
     title: "Tra cứu 1-2 người",
     url: ROUTES.VOICE_SEARCH_MULTI,
     icon: UsersRound,
+  },
+  {
+    title: "Dịch tài liệu",
+    url: ROUTES.TRANSLATOR,
+    icon: Languages,
   },
   {
     title: "Hướng dẫn sử dụng",

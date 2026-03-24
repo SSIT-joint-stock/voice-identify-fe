@@ -6,6 +6,10 @@ export const QUERY_KEYS = {
     identify: ["voice", "identify"] as const,
     identifyTwo: ["voice", "identify-two"] as const,
   },
+  translator: {
+    ocr: ["translator", "ocr"] as const,
+    translate: ["translator", "translate"] as const,
+  },
 } as const;
 
 export const ROUTES = {
@@ -15,6 +19,7 @@ export const ROUTES = {
   VOICE_SEARCH_SINGLE: "/voice/search-single",
   VOICE_SEARCH_MULTI: "/voice/search-multi",
   VOICE_GUIDE: "/voice/guide",
+  TRANSLATOR: "/translator",
   NOT_FOUND: "*",
 } as const;
 
@@ -42,13 +47,30 @@ export const ACCEPTED_AUDIO_TYPES = [
   "audio/flac",
 ] as const;
 
+export const ACCEPTED_TRANSLATOR_FILE_TYPES = [
+  "application/pdf",
+  "image/png",
+  "image/jpeg",
+  "text/plain",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+] as const;
+
 export const MAX_AUDIO_FILE_SIZE_MB = 25;
 export const MAX_AUDIO_FILE_SIZE_BYTES = MAX_AUDIO_FILE_SIZE_MB * 1024 * 1024;
+
+export const MAX_TRANSLATOR_FILE_SIZE_MB = 25;
+export const MAX_TRANSLATOR_FILE_SIZE_BYTES =
+  MAX_TRANSLATOR_FILE_SIZE_MB * 1024 * 1024;
 
 export const VOICE_API_ENDPOINTS = {
   UPLOAD: "/upload_voice/",
   IDENTIFY: "/identify_voice/",
   IDENTIFY_TWO: "/identify_2_voice/",
+} as const;
+
+export const TRANSLATOR_API_ENDPOINTS = {
+  OCR: "/ocr/",
+  TRANSLATE: "/translate",
 } as const;
 
 export const VOICE_TABS = {

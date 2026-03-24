@@ -6,6 +6,7 @@ import VoiceGuide from "@/pages/VoiceGuide";
 import VoiceSearchSingle from "@/pages/VoiceSearchSingle";
 import VoiceSearchMulti from "@/pages/VoiceSearchMulti";
 import { ROUTES } from "@/constants";
+import Translator from "@/pages/Translator";
 
 function App() {
   return (
@@ -26,9 +27,10 @@ function App() {
           element={<VoiceSearchMulti />}
         />
         <Route path={ROUTES.VOICE_GUIDE} element={<VoiceGuide />} />
+        <Route path={ROUTES.TRANSLATOR} element={<Translator />} />
         <Route
           path={ROUTES.NOT_FOUND}
-          element={<Navigate to={ROUTES.VOICE_SEARCH_SINGLE} replace />}
+          element={<Navigate to={ROUTES.HOME} replace />}
         />
       </Route>
     </Routes>
