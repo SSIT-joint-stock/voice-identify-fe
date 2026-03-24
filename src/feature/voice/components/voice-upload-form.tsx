@@ -24,6 +24,7 @@ import { VoiceAudioDropzone } from './voice-audio-dropzone';
 import { VoiceAudioPlayer } from './voice-audio-player';
 import { cropAudioFile } from '@/utils/audio.utils';
 import type { VoiceIdentifyTwoItem } from '../types/voice.types';
+import { useEffect } from 'react';
 
 interface VoiceUploadFormProps {
   initialFile?: File | null;
@@ -75,6 +76,22 @@ export function VoiceUploadForm({
     name: 'criminalRecords',
   });
 
+  // Reset form when initial values change (e.g. switching between speakers)
+  useEffect(() => {
+    form.reset({
+      name: '',
+      citizenIdentification: '',
+      phoneNumber: '',
+      hometown: '',
+      job: '',
+      passport: '',
+      criminalRecords: [],
+      audioFile: initialFile,
+      start: initialStart,
+      end: initialEnd,
+    });
+  }, [initialFile, initialStart, initialEnd, form]);
+
   const uploadMutation = useUploadVoice({
     onSuccess: () => {
       form.reset({
@@ -115,14 +132,14 @@ export function VoiceUploadForm({
         return;
       }
 
-      await uploadMutation.mutateAsync({
+      const response = await uploadMutation.mutateAsync({
         ...values,
         audioFile: fileToUpload,
       });
 
       // Construct partial result info to update UI immediately
       onUploadSuccess?.({
-        matched_voice_id: 'pending', // Temporary or extracted from response if available
+        matched_voice_id: response.voice_id || 'pending', // Use real ID from response if possible
         name: values.name.trim(),
         citizen_identification: values.citizenIdentification.trim(),
         phone_number: values.phoneNumber.trim(),

@@ -51,6 +51,7 @@ export interface IdentifyTwoVoiceRequest {
 export interface VoiceIdentifyItem {
   message: string;
   matched_voice_id?: string;
+  voice_id?: string; // Fallback or from registration
   score?: number;
   name?: string;
   citizen_identification?: string;
@@ -69,6 +70,7 @@ export interface VoiceIdentifyTwoItem extends VoiceIdentifyItem {
 
 export interface UploadVoiceResponse {
   message: string;
+  voice_id?: string;
   raw: unknown;
 }
 

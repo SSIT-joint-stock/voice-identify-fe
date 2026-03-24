@@ -80,11 +80,24 @@ export function VoiceEnrollDialog({
 
               <div className="min-w-0">
                 <VoiceUploadForm
+                  key={
+                    speakerItem
+                      ? `${speakerItem.matched_voice_id}-${longestSegment?.start}-${longestSegment?.end}`
+                      : 'new'
+                  }
                   initialFile={sourceFile}
                   initialStart={longestSegment?.start}
                   initialEnd={longestSegment?.end}
                   compact
-                  onUploadSuccess={() => onOpenChange(false)}
+                  onUploadSuccess={(data) => {
+                    if (data) {
+                      onEnrollSuccess?.({
+                        ...speakerItem,
+                        ...data,
+                      } as VoiceIdentifyTwoItem);
+                    }
+                    onOpenChange(false);
+                  }}
                 />
               </div>
             </div>
