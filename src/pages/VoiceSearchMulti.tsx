@@ -15,10 +15,13 @@ export default function VoiceSearchMulti() {
   const [audioFile, setAudioFile] = useState<File | null>(null);
   const [openEnrollDialog, setOpenEnrollDialog] = useState(false);
   const [selectedUnknownItem, setSelectedUnknownItem] = useState<VoiceIdentifyTwoItem | null>(null);
+  const [selectedSpeakerIndex, setSelectedSpeakerIndex] = useState<number | null>(null);
   const [selectedSegment, setSelectedSegment] = useState<{
     start?: number;
     end?: number;
   }>({});
+
+  const updateIdentifyTwoSpeaker = useVoiceStore((state) => state.updateIdentifyTwoSpeaker);
 
   useEffect(() => {
     resetIdentifyTwoResult();
@@ -75,6 +78,7 @@ export default function VoiceSearchMulti() {
                 onSelectSegment={(start, end) => setSelectedSegment({ start, end })}
                 onRegisterUnknown={() => {
                   setSelectedUnknownItem(item);
+                  setSelectedSpeakerIndex(index);
                   setOpenEnrollDialog(true);
                 }}
               />
@@ -91,10 +95,18 @@ export default function VoiceSearchMulti() {
         open={openEnrollDialog}
         onOpenChange={(open) => {
           setOpenEnrollDialog(open);
-          if (!open) setSelectedUnknownItem(null);
+          if (!open) {
+            setSelectedUnknownItem(null);
+            setSelectedSpeakerIndex(null);
+          }
         }}
         sourceFile={audioFile}
         speakerItem={selectedUnknownItem}
+        onEnrollSuccess={(data) => {
+          if (selectedSpeakerIndex !== null) {
+            updateIdentifyTwoSpeaker(selectedSpeakerIndex, data);
+          }
+        }}
       />
 
       <VoiceErrorDialog

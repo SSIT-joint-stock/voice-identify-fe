@@ -1,11 +1,12 @@
-import { create } from "zustand";
-import { VOICE_TABS } from "@/constants";
+import { create } from 'zustand';
+import { VOICE_TABS } from '@/constants';
 import type {
   IdentifyTwoVoiceResponse,
   IdentifyVoiceResponse,
   UploadVoiceResponse,
   VoiceErrorDialogState,
-} from "../types/voice.types";
+  VoiceIdentifyTwoItem,
+} from '../types/voice.types';
 
 type VoiceTabValue = (typeof VOICE_TABS)[keyof typeof VOICE_TABS];
 
@@ -28,12 +29,13 @@ interface VoiceState {
   openErrorDialog: (title: string, description: string) => void;
   closeErrorDialog: () => void;
   resetAllResults: () => void;
+  updateIdentifyTwoSpeaker: (index: number, item: VoiceIdentifyTwoItem) => void;
 }
 
 const initialErrorDialog: VoiceErrorDialogState = {
   open: false,
-  title: "",
-  description: "",
+  title: '',
+  description: '',
 };
 
 export const useVoiceStore = create<VoiceState>((set) => ({
@@ -72,5 +74,17 @@ export const useVoiceStore = create<VoiceState>((set) => ({
       identifyResult: null,
       identifyTwoResult: null,
       errorDialog: initialErrorDialog,
+    }),
+  updateIdentifyTwoSpeaker: (index, item) =>
+    set((state) => {
+      if (!state.identifyTwoResult) return state;
+      const newItems = [...state.identifyTwoResult.items];
+      newItems[index] = item;
+      return {
+        identifyTwoResult: {
+          ...state.identifyTwoResult,
+          items: newItems,
+        },
+      };
     }),
 }));
