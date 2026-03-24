@@ -4,11 +4,11 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
-} from '@/components/ui/dialog';
-import { Badge } from '@/components/ui/badge';
-import { VoiceUploadForm } from './voice-upload-form';
-import { VoiceAudioPlayer } from './voice-audio-player';
-import type { VoiceIdentifyTwoItem } from '../types/voice.types';
+} from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
+import { VoiceUploadForm } from "./voice-upload-form";
+import { VoiceAudioPlayer } from "./voice-audio-player";
+import type { VoiceIdentifyTwoItem } from "../types/voice.types";
 
 interface VoiceEnrollDialogProps {
   open: boolean;
@@ -20,7 +20,18 @@ interface VoiceEnrollDialogProps {
 function formatSeconds(value: number) {
   const minutes = Math.floor(value / 60);
   const seconds = Math.floor(value % 60);
-  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+  return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(
+    2,
+    "0"
+  )}`;
+}
+
+function getLongestSegment(item?: VoiceIdentifyTwoItem | null) {
+  if (!item?.audio_segment?.length) return undefined;
+
+  return [...item.audio_segment].sort(
+    (a, b) => b.end - b.start - (a.end - a.start)
+  )[0];
 }
 
 export function VoiceEnrollDialog({
@@ -29,60 +40,63 @@ export function VoiceEnrollDialog({
   sourceFile,
   speakerItem,
 }: VoiceEnrollDialogProps) {
+  const longestSegment = getLongestSegment(speakerItem);
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-4xl">
-        <DialogHeader>
-          <DialogTitle>Đăng ký giọng nói</DialogTitle>
-          <DialogDescription>
-            Mở form đăng ký để lưu thông tin người nói chưa có trên hệ thống.
-            {speakerItem?.audio_segment?.length
-              ? ' Có kèm thông tin segment để đối chiếu khi thao tác.'
-              : ''}
-          </DialogDescription>
-        </DialogHeader>
+      <DialogContent className="h-[92vh] w-[95vw] max-w-7xl overflow-hidden sm:max-w-[90vw] lg:max-w-7xl p-0">
+        <div className="flex h-full min-h-0 flex-col">
+          <DialogHeader className="shrink-0 border-b px-6 py-4 text-left">
+            <DialogTitle>Đăng ký giọng nói</DialogTitle>
+            <DialogDescription>
+              Mở form đăng ký để lưu thông tin người nói chưa có trên hệ thống.
+              {speakerItem?.audio_segment?.length
+                ? " Có kèm thông tin segment để đối chiếu khi thao tác."
+                : ""}
+            </DialogDescription>
+          </DialogHeader>
 
-        <div className="space-y-4">
-          {sourceFile ? (
-            <div className="rounded-lg border p-3 text-sm text-muted-foreground">
-              File nguồn: <span className="font-medium">{sourceFile.name}</span>
-            </div>
-          ) : null}
+          <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden px-6 py-4">
+            <div className="space-y-4 min-w-0">
+              {sourceFile ? (
+                <div className="rounded-lg border p-3 text-sm text-muted-foreground break-all">
+                  File nguồn:{" "}
+                  <span className="font-medium">{sourceFile.name}</span>
+                </div>
+              ) : null}
 
-          {speakerItem?.audio_segment?.length ? (
-            <div className="space-y-2 rounded-lg border p-3">
-              <p className="text-sm font-medium">Timestamp speaker</p>
-              <div className="flex flex-wrap gap-2">
-                {speakerItem.audio_segment.map((segment, index) => (
-                  <Badge key={`${segment.start}-${segment.end}-${index}`} variant="secondary">
-                    {formatSeconds(segment.start)} - {formatSeconds(segment.end)}
-                  </Badge>
-                ))}
+              {speakerItem?.audio_segment?.length ? (
+                <div className="space-y-2 rounded-lg border p-3">
+                  <p className="text-sm font-medium">Timestamp speaker</p>
+                  <div className="flex flex-wrap gap-2">
+                    {speakerItem.audio_segment.map((segment, index) => (
+                      <Badge
+                        key={`${segment.start}-${segment.end}-${index}`}
+                        variant="secondary"
+                      >
+                        {formatSeconds(segment.start)} -{" "}
+                        {formatSeconds(segment.end)}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+
+              <div className="min-w-0">
+                <VoiceAudioPlayer file={sourceFile} title="Audio nguồn" />
+              </div>
+
+              <div className="min-w-0">
+                <VoiceUploadForm
+                  initialFile={sourceFile}
+                  initialStart={longestSegment?.start}
+                  initialEnd={longestSegment?.end}
+                  compact
+                  onUploadSuccess={() => onOpenChange(false)}
+                />
               </div>
             </div>
-          ) : null}
-
-          <VoiceAudioPlayer file={sourceFile} title="Audio nguồn" />
-
-          <VoiceUploadForm
-            initialFile={sourceFile}
-            initialStart={
-              speakerItem?.audio_segment && speakerItem.audio_segment.length > 0
-                ? [...speakerItem.audio_segment].sort(
-                    (a, b) => b.end - b.start - (a.end - a.start)
-                  )[0].start
-                : undefined
-            }
-            initialEnd={
-              speakerItem?.audio_segment && speakerItem.audio_segment.length > 0
-                ? [...speakerItem.audio_segment].sort(
-                    (a, b) => b.end - b.start - (a.end - a.start)
-                  )[0].end
-                : undefined
-            }
-            compact
-            onUploadSuccess={() => onOpenChange(false)}
-          />
+          </div>
         </div>
       </DialogContent>
     </Dialog>
