@@ -1,37 +1,33 @@
+import { Badge } from '@/components/ui/badge';
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
-import { Badge } from "@/components/ui/badge";
-import { VoiceUploadForm } from "./voice-upload-form";
-import { VoiceAudioPlayer } from "./voice-audio-player";
-import type { VoiceIdentifyTwoItem } from "../types/voice.types";
+} from '@/components/ui/dialog';
+import type { VoiceIdentifyTwoItem } from '../types/voice.types';
+import { VoiceAudioPlayer } from './voice-audio-player';
+import { VoiceUploadForm } from './voice-upload-form';
 
 interface VoiceEnrollDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   sourceFile: File | null;
   speakerItem?: VoiceIdentifyTwoItem | null;
+  onEnrollSuccess?: (data: VoiceIdentifyTwoItem) => void;
 }
 
 function formatSeconds(value: number) {
   const minutes = Math.floor(value / 60);
   const seconds = Math.floor(value % 60);
-  return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(
-    2,
-    "0"
-  )}`;
+  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 }
 
 function getLongestSegment(item?: VoiceIdentifyTwoItem | null) {
   if (!item?.audio_segment?.length) return undefined;
 
-  return [...item.audio_segment].sort(
-    (a, b) => b.end - b.start - (a.end - a.start)
-  )[0];
+  return [...item.audio_segment].sort((a, b) => b.end - b.start - (a.end - a.start))[0];
 }
 
 export function VoiceEnrollDialog({
@@ -39,6 +35,7 @@ export function VoiceEnrollDialog({
   onOpenChange,
   sourceFile,
   speakerItem,
+  onEnrollSuccess,
 }: VoiceEnrollDialogProps) {
   const longestSegment = getLongestSegment(speakerItem);
 
@@ -51,8 +48,8 @@ export function VoiceEnrollDialog({
             <DialogDescription>
               Mở form đăng ký để lưu thông tin người nói chưa có trên hệ thống.
               {speakerItem?.audio_segment?.length
-                ? " Có kèm thông tin segment để đối chiếu khi thao tác."
-                : ""}
+                ? ' Có kèm thông tin segment để đối chiếu khi thao tác.'
+                : ''}
             </DialogDescription>
           </DialogHeader>
 
@@ -60,8 +57,7 @@ export function VoiceEnrollDialog({
             <div className="space-y-4 min-w-0">
               {sourceFile ? (
                 <div className="rounded-lg border p-3 text-sm text-muted-foreground break-all">
-                  File nguồn:{" "}
-                  <span className="font-medium">{sourceFile.name}</span>
+                  File nguồn: <span className="font-medium">{sourceFile.name}</span>
                 </div>
               ) : null}
 
@@ -70,12 +66,8 @@ export function VoiceEnrollDialog({
                   <p className="text-sm font-medium">Timestamp speaker</p>
                   <div className="flex flex-wrap gap-2">
                     {speakerItem.audio_segment.map((segment, index) => (
-                      <Badge
-                        key={`${segment.start}-${segment.end}-${index}`}
-                        variant="secondary"
-                      >
-                        {formatSeconds(segment.start)} -{" "}
-                        {formatSeconds(segment.end)}
+                      <Badge key={`${segment.start}-${segment.end}-${index}`} variant="secondary">
+                        {formatSeconds(segment.start)} - {formatSeconds(segment.end)}
                       </Badge>
                     ))}
                   </div>
@@ -88,11 +80,24 @@ export function VoiceEnrollDialog({
 
               <div className="min-w-0">
                 <VoiceUploadForm
+                  key={
+                    speakerItem
+                      ? `${speakerItem.matched_voice_id}-${longestSegment?.start}-${longestSegment?.end}`
+                      : 'new'
+                  }
                   initialFile={sourceFile}
                   initialStart={longestSegment?.start}
                   initialEnd={longestSegment?.end}
                   compact
-                  onUploadSuccess={() => onOpenChange(false)}
+                  onUploadSuccess={(data) => {
+                    if (data) {
+                      onEnrollSuccess?.({
+                        ...speakerItem,
+                        ...data,
+                      } as VoiceIdentifyTwoItem);
+                    }
+                    onOpenChange(false);
+                  }}
                 />
               </div>
             </div>

@@ -68,7 +68,7 @@ voice-identify-fe/
    Tạo file `.env` từ mẫu:
 
    ```bash
-   VITE_API_BASE_URL=http://14.224.188.206:1112
+   VITE_API_BASE_URL=
    ```
 
 3. **Install Dependencies**
