@@ -46,7 +46,8 @@ function normalizeIdentifyItem(item: unknown): VoiceIdentifyItem | null {
 
   return {
     message: asString(data.message, asString(item.message, '')),
-    matched_voice_id: asString(data.matched_voice_id, ''),
+    matched_voice_id: asString(data.matched_voice_id, asString(data.voice_id, '')),
+    voice_id: asString(data.voice_id, ''),
     score: asNumber(data.score),
     name: asString(data.name, ''),
     citizen_identification: asString(data.citizen_identification, ''),
@@ -101,27 +102,20 @@ export const voiceApi = {
         job: payload.job,
         passport: payload.passport,
       },
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
     });
 
+    const data = response.data as Record<string, unknown>;
+
     return {
-      message: asString(
-        (response.data as Record<string, unknown>)?.message,
-        'Upload voice thành công.'
-      ),
+      message: asString(data?.message, 'Upload voice thành công.'),
+      voice_id: asString(data?.voice_id, ''),
       raw: response.data,
     };
   },
 
   async identifyVoice(payload: IdentifyVoiceRequest): Promise<IdentifyVoiceResponse> {
     const formData = buildSingleAudioFormData(payload.file);
-    const response = await axiosInstance.post(VOICE_API_ENDPOINTS.IDENTIFY, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
+    const response = await axiosInstance.post(VOICE_API_ENDPOINTS.IDENTIFY, formData);
 
     const items = asArray<unknown>(response.data)
       .map(normalizeIdentifyItem)
@@ -137,11 +131,7 @@ export const voiceApi = {
 
   async identifyTwoVoice(payload: IdentifyTwoVoiceRequest): Promise<IdentifyTwoVoiceResponse> {
     const formData = buildSingleAudioFormData(payload.file);
-    const response = await axiosInstance.post(VOICE_API_ENDPOINTS.IDENTIFY_TWO, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
+    const response = await axiosInstance.post(VOICE_API_ENDPOINTS.IDENTIFY_TWO, formData);
 
     const data = response.data;
     // Handle both array and object responses (e.g. { "0": {...}, "1": {...} })
