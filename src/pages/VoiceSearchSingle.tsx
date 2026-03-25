@@ -53,8 +53,7 @@ export default function VoiceSearchSingle() {
             </h1>
             <p className="max-w-3xl text-sm text-muted-foreground">
               Tải file audio có một người nói để tra cứu top 5 kết quả phù hợp
-              nhất. Nếu không tìm thấy người phù hợp, có thể mở popup để đăng ký
-              giọng nói mới.
+              nhất.
             </p>
           </div>
         </section>

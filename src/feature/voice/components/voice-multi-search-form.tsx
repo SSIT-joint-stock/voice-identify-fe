@@ -56,9 +56,6 @@ export function VoiceMultiSearchForm({
     <Card className="rounded-2xl">
       <CardHeader>
         <CardTitle>Tra cứu 1-2 người</CardTitle>
-        <CardDescription>
-          Tải file audio có tối đa 2 người nói để nhận diện theo từng speaker.
-        </CardDescription>
       </CardHeader>
 
       <CardContent>
