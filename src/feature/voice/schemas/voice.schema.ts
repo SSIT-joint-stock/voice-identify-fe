@@ -28,11 +28,11 @@ const criminalRecordItemSchema = z.object({
 
 export const uploadVoiceSchema = z.object({
   name: z.string().trim().min(1, 'Vui lòng nhập họ tên.'),
-  citizenIdentification: z.string().trim().min(1, 'Vui lòng nhập CCCD/CMND.'),
-  phoneNumber: z.string().trim().min(1, 'Vui lòng nhập số điện thoại.'),
-  hometown: z.string().trim().min(1, 'Vui lòng nhập quê quán.'),
-  job: z.string().trim().min(1, 'Vui lòng nhập nghề nghiệp.'),
-  passport: z.string().trim().min(1, 'Vui lòng nhập số hộ chiếu.'),
+  citizenIdentification: z.string().trim().optional().default(''),
+  phoneNumber: z.string().trim().optional().default(''),
+  hometown: z.string().trim().optional().default(''),
+  job: z.string().trim().optional().default(''),
+  passport: z.string().trim().optional().default(''),
   criminalRecords: z.array(criminalRecordItemSchema).default([]),
   audioFile: audioFileSchema,
   start: z.number().optional(),

@@ -32,10 +32,10 @@ export function MainLayout() {
 
               <div className=" text-[#fad29e]">
                 <p className="text-xsm font-sans font-light tracking-wide md:text-base">
-                  CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM
+                  BỘ CÔNG AN
                 </p>
                 <p className="text-big font-sans font-bold tracking-wide md:text-[18px]">
-                  BỘ CÔNG AN
+                  CỤC KỸ THUẬT NGHIỆP VỤ
                 </p>
               </div>
             </div>

@@ -50,7 +50,7 @@ export function VoiceResultTwoSpeakers({ items }: VoiceResultTwoSpeakersProps) {
                 </div>
 
                 <div>
-                  <p className="text-sm text-muted-foreground">CCCD/CMND</p>
+                  <p className="text-sm text-muted-foreground">CCCD</p>
                   <p className="font-medium">
                     {item.citizen_identification || "-"}
                   </p>

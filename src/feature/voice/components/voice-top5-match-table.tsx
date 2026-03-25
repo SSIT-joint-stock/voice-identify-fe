@@ -39,10 +39,9 @@ export function VoiceTop5MatchTable({
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Hạng</TableHead>
-                <TableHead>Message</TableHead>
+                <TableHead>STT</TableHead>
                 <TableHead>Họ tên</TableHead>
-                <TableHead>CCCD/CMND</TableHead>
+                <TableHead>CCCD</TableHead>
                 <TableHead>Điện thoại</TableHead>
                 <TableHead>Điểm số</TableHead>
               </TableRow>

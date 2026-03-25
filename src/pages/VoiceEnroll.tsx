@@ -1,4 +1,4 @@
-import { Mic, FileAudio, ShieldCheck } from "lucide-react";
+import { Mic } from "lucide-react";
 import { useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { VoiceUploadForm } from "@/feature/voice/components/voice-upload-form";
@@ -24,7 +24,7 @@ export default function VoiceEnroll() {
               Khai báo hồ sơ giọng nói
             </div>
             <h1 className="text-3xl font-bold tracking-tight">
-              Khai báo hồ sơ và enroll giọng nói
+              Khai báo hồ sơ và định danh giọng nói
             </h1>
             <p className="max-w-3xl text-sm text-muted-foreground">
               Cập nhật thông tin định danh và tải file audio để lưu mẫu giọng
@@ -33,25 +33,6 @@ export default function VoiceEnroll() {
           </div>
 
           <div className="grid gap-3 sm:grid-cols-2">
-            <Card className="rounded-2xl">
-              <CardContent className="flex items-center gap-3 p-4">
-                <FileAudio className="size-5" />
-                <div>
-                  <p className="text-sm text-muted-foreground">Audio</p>
-                  <p className="font-semibold">Upload file mẫu</p>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="rounded-2xl">
-              <CardContent className="flex items-center gap-3 p-4">
-                <ShieldCheck className="size-5" />
-                <div>
-                  <p className="text-sm text-muted-foreground">Profile</p>
-                  <p className="font-semibold">Lưu hồ sơ định danh</p>
-                </div>
-              </CardContent>
-            </Card>
           </div>
         </div>
       </section>

@@ -142,7 +142,7 @@ export function VoiceAudioDropzone({
                 type="button"
                 onClick={handleToggleRecording}
                 disabled={disabled}
-                className="gap-2 bg-red-600 text-white hover:bg-red-700"
+                className="gap-2 bg-red-600 text-white shadow-md shadow-red-200 transition-all duration-200 hover:bg-red-700 hover:scale-105 hover:shadow-lg hover:shadow-red-300 active:scale-95"
               >
                 <Mic className="size-4" />
                 Ghi âm
@@ -177,7 +177,7 @@ export function VoiceAudioDropzone({
                 type="button"
                 onClick={handleToggleRecording}
                 disabled={disabled}
-                className="gap-2 bg-red-600 text-white hover:bg-red-700"
+                className="gap-2 bg-red-600 text-white shadow-md shadow-red-200 transition-all duration-200 hover:bg-red-700 hover:scale-105 hover:shadow-lg hover:shadow-red-300 active:scale-95"
               >
                 <Mic className="size-4" />
                 Ghi âm lại
