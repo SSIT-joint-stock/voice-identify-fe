@@ -7,7 +7,6 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -159,21 +158,45 @@ export function VoiceUploadForm({
       <CardHeader className={compact ? 'pb-3' : undefined}>
         <CardTitle>Đăng ký giọng nói</CardTitle>
         <CardDescription>
-          Theo spec API: thông tin cá nhân đi bằng query params, còn file và criminal_record đi bằng
-          form-data.
         </CardDescription>
       </CardHeader>
 
       <CardContent>
         <Form {...form}>
           <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
-            <div className="grid gap-4 md:grid-cols-2">
+            <FormField
+              control={form.control}
+              name="audioFile"
+              render={({ field, fieldState }) => (
+                <FormItem>
+                  <FormLabel>File audio</FormLabel>
+                  <FormControl>
+                    <VoiceAudioDropzone
+                      value={field.value ?? null}
+                      onChange={(file) => {
+                        field.onChange(file);
+                        onFileChange?.();
+                      }}
+                      disabled={uploadMutation.isPending}
+                      error={fieldState.error?.message}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <VoiceAudioPlayer file={watchedAudioFile ?? null} title="Audio đăng ký" />
+
+            {watchedAudioFile ? (
+            <>
+            <div className="grid gap-4 md:grid-cols-2 animate-in fade-in-0 slide-in-from-bottom-4 duration-300">
               <FormField
                 control={form.control}
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Họ tên</FormLabel>
+                    <FormLabel>Họ tên <span className="text-destructive">*</span></FormLabel>
                     <FormControl>
                       <Input placeholder="Nhập họ tên" {...field} />
                     </FormControl>
@@ -187,9 +210,9 @@ export function VoiceUploadForm({
                 name="citizenIdentification"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>CCCD/CMND</FormLabel>
+                    <FormLabel>CCCD</FormLabel>
                     <FormControl>
-                      <Input placeholder="Nhập CCCD/CMND" {...field} />
+                      <Input placeholder="Nhập CCCD" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -256,11 +279,7 @@ export function VoiceUploadForm({
             <div className="space-y-4">
               <div className="flex items-center justify-between gap-3">
                 <div>
-                  <FormLabel>Criminal record</FormLabel>
-                  <FormDescription>
-                    Thêm từng mục tiền án / tiền sự. Hệ thống sẽ tự đóng gói thành JSON gửi lên
-                    server.
-                  </FormDescription>
+                  <FormLabel>Tiền án tiền sự</FormLabel>
                 </div>
 
                 <Button
@@ -275,7 +294,7 @@ export function VoiceUploadForm({
 
               {fields.length === 0 ? (
                 <div className="rounded-xl border border-dashed p-4 text-sm text-muted-foreground">
-                  Chưa có mục nào. Nếu không có tiền án / tiền sự, hệ thống sẽ gửi [].
+                  Chưa có mục nào.
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -340,31 +359,7 @@ export function VoiceUploadForm({
               )}
             </div>
 
-            <FormField
-              control={form.control}
-              name="audioFile"
-              render={({ field, fieldState }) => (
-                <FormItem>
-                  <FormLabel>File audio</FormLabel>
-                  <FormControl>
-                    <VoiceAudioDropzone
-                      value={field.value ?? null}
-                      onChange={(file) => {
-                        field.onChange(file);
-                        onFileChange?.();
-                      }}
-                      disabled={uploadMutation.isPending}
-                      error={fieldState.error?.message}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <VoiceAudioPlayer file={watchedAudioFile ?? null} title="Audio đăng ký" />
-
-            <Button type="submit" disabled={uploadMutation.isPending}>
+            <Button type="submit" disabled={uploadMutation.isPending} className="animate-in fade-in-0 slide-in-from-bottom-4 duration-300 delay-100">
               {uploadMutation.isPending ? (
                 <>
                   <LoaderCircle className="mr-2 size-4 animate-spin" />
@@ -374,6 +369,8 @@ export function VoiceUploadForm({
                 'Upload voice'
               )}
             </Button>
+            </>
+            ) : null}
           </form>
         </Form>
       </CardContent>

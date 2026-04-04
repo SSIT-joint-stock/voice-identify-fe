@@ -31,7 +31,6 @@ export function VoiceResultTop5({ items }: VoiceResultTop5Props) {
             <TableHeader>
               <TableRow>
                 <TableHead>Hạng</TableHead>
-                <TableHead>Message</TableHead>
                 <TableHead>Họ tên</TableHead>
                 <TableHead>CCCD/CMND</TableHead>
                 <TableHead>Điện thoại</TableHead>

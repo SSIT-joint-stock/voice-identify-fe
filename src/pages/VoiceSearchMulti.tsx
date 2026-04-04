@@ -44,8 +44,7 @@ export default function VoiceSearchMulti() {
             </div>
             <h1 className="text-3xl font-bold tracking-tight">Nhận diện giọng nói 1-2 người</h1>
             <p className="max-w-3xl text-sm text-muted-foreground">
-              Tải file audio có tối đa 2 người nói. Hệ thống sẽ hiển thị kết quả theo từng speaker,
-              kèm segment thời gian và hành động đăng ký nếu chưa có dữ liệu phù hợp.
+              Tải file audio có tối đa 2 người nói.
             </p>
           </div>
         </section>
@@ -70,18 +69,22 @@ export default function VoiceSearchMulti() {
         <div className="grid gap-6 xl:grid-cols-2">
           {items.length > 0 ? (
             items.map((item, index) => (
-              <VoiceSpeakerResultCard
+              <div
                 key={`${item.matched_voice_id || item.name || item.message}-${index}`}
-                title={`Người nói ${index + 1}`}
-                item={item}
-                speakerIndex={index}
-                onSelectSegment={(start, end) => setSelectedSegment({ start, end })}
-                onRegisterUnknown={() => {
-                  setSelectedUnknownItem(item);
-                  setSelectedSpeakerIndex(index);
-                  setOpenEnrollDialog(true);
-                }}
-              />
+                className={items.length === 1 ? "xl:col-span-2" : ""}
+              >
+                <VoiceSpeakerResultCard
+                  title={`Người nói ${index + 1}`}
+                  item={item}
+                  speakerIndex={index}
+                  onSelectSegment={(start, end) => setSelectedSegment({ start, end })}
+                  onRegisterUnknown={() => {
+                    setSelectedUnknownItem(item);
+                    setSelectedSpeakerIndex(index);
+                    setOpenEnrollDialog(true);
+                  }}
+                />
+              </div>
             ))
           ) : (
             <div className="rounded-2xl border p-5 text-sm text-muted-foreground xl:col-span-2">
