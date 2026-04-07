@@ -54,7 +54,6 @@ export function VoiceTop5MatchTable({
                   }-${index}`}
                 >
                   <TableCell>{index + 1}</TableCell>
-                  <TableCell>{item.message || '-'}</TableCell>
                   <TableCell className="font-medium">{item.name || '-'}</TableCell>
                   <TableCell>{item.citizen_identification || '-'}</TableCell>
                   <TableCell>{item.phone_number || '-'}</TableCell>
